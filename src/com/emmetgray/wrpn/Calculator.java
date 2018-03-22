@@ -3026,16 +3026,16 @@ public class Calculator {
                                     RawDisplay.toString(), 37));
                             break;
                         case Hex:
-                            Packet.setDisplayText(String.format("%1$39s",
-                                    StringRight(RawDisplay.toString(), 37) + " h"));
+                            Packet.setDisplayText(String.format("%1$19s",
+                                    StringRight(RawDisplay.toString(), 17) + " h"));
                             break;
                         case Dec:
-                            Packet.setDisplayText(String.format("%1$39s",
-                                    StringRight(RawDisplay.toString(), 37) + " d"));
+                            Packet.setDisplayText(String.format("%1$19s",
+                                    StringRight(RawDisplay.toString(), 17) + " d"));
                             break;
                         case Oct:
-                            Packet.setDisplayText(String.format("%1$39s",
-                                    StringRight(RawDisplay.toString(), 37) + " o"));
+                            Packet.setDisplayText(String.format("%1$19s",
+                                    StringRight(RawDisplay.toString(), 17) + " o"));
                             break;
                         case Bin:
                             Packet.setDisplayText(String.format("%1$39s",
@@ -3134,7 +3134,7 @@ public class Calculator {
                 if (!cs.isFlag(CalcState.CalcFlag.LeadingZero)) {
                     temp = TrimZeros(temp);
                 }
-                DisplayText = String.format("%1$39s", temp + " h");
+                DisplayText = String.format("%1$19s", temp + " h");
                 break;
             case Dec:
                 // Note: the decimal mode is the only one that has to deal with the
@@ -3142,14 +3142,14 @@ public class Calculator {
                 temp = TrimZeros(cs.getStack().getX().getBiVal().ToStringDec());
                 // It's rather odd, that the LeadingZero feature is forced off (page
                 // 36)
-                DisplayText = String.format("%1$39s", temp + " d");
+                DisplayText = String.format("%1$19s", temp + " d");
                 break;
             case Oct:
                 temp = cs.getStack().getX().getBiVal().ToStringOct();
                 if (!cs.isFlag(CalcState.CalcFlag.LeadingZero)) {
                     temp = TrimZeros(temp);
                 }
-                DisplayText = String.format("%1$39s", temp + " o");
+                DisplayText = String.format("%1$19s", temp + " o");
                 break;
             case Bin:
                 temp = cs.getStack().getX().getBiVal().ToStringBin(true);
