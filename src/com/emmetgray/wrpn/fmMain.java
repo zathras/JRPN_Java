@@ -273,7 +273,6 @@ public class fmMain extends javax.swing.JFrame {
         mHelpAbout = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(CALC_WIDTH, CALC_HEIGHT));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -286,7 +285,6 @@ public class fmMain extends javax.swing.JFrame {
         });
 
         jLayeredPane1.setDoubleBuffered(true);
-        jLayeredPane1.setMinimumSize(new java.awt.Dimension(512, 320));
 
         tbDisplay.setEditable(false);
         tbDisplay.setFont(new java.awt.Font("Lucidia Sans Typewriter", 1, 12)); // NOI18N
@@ -1244,6 +1242,7 @@ public class fmMain extends javax.swing.JFrame {
 
         pack();
         setFonts();
+        setMinimumSize(getSize());
     }
 
     // move and resize the controls to match the new size of the form
