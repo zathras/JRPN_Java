@@ -194,9 +194,13 @@ public class GButton extends JButton {
             if (shiftUp == 0) {
                 shiftUp = 1;
             }
+            int shiftLeft = sqrtWidth / 6;
+            if (shiftLeft == 0) {
+                shiftLeft = 1;
+            }
             y -= shiftUp;
-            x += sqrtWidth;
-            g.drawString(" \u0305", x, y);  // I'm not sure why, but this makes the bar wider
+            x += sqrtWidth - shiftLeft;
+            // g.drawString(" \u0305", x, y);  // I'm not sure why, but this makes the bar wider
             g.drawString("x\u0305", x, y);
         }
     }
