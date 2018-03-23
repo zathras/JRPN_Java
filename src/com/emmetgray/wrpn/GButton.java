@@ -27,8 +27,8 @@ public class GButton extends JButton {
 
     protected String whiteLabel;
     protected int whiteX, whiteY;
-    private String blueLabel;
-    private int blueX, blueY;
+    protected String blueLabel;
+    protected int blueX, blueY;
 
     private static Font blueFont;
     private static Font whiteFont;
@@ -138,11 +138,15 @@ public class GButton extends JButton {
 
         g.setColor(blueColor);
         g.setFont(blueFont);
-        g.drawString(blueLabel, blueX + offsetX, blueY + offsetY);
+        drawBlueLabel(g, offsetX, offsetY);
 
         g.setColor(whiteColor);
         g.setFont(whiteFont);
         drawWhiteLabel(g, offsetX, offsetY);
+    }
+
+    protected void drawBlueLabel(Graphics2D g, int offsetX, int offsetY) {
+        g.drawString(blueLabel, blueX + offsetX, blueY + offsetY);
     }
 
     protected void drawWhiteLabel(Graphics2D g, int offsetX, int offsetY) {
@@ -198,6 +202,40 @@ public class GButton extends JButton {
         protected void drawWhiteLabel(Graphics2D g, int offsetX, int offsetY) {
             g.setColor(Color.BLACK);
             g.drawString(whiteLabel, whiteX + offsetX - descent, whiteY + offsetY);
+        }
+    }
+
+    // I fudge the sqrt symbol in the blue text on the OCT key so the bar over the x
+    // joins the sqrt symbol.
+    public static class Sqrt extends GButton {
+        int sqrtWidth;
+        int blueHeight;
+        @Override
+        public void alignText(FontMetrics buttonWhiteMetrics, FontMetrics buttonBlueMetrics) {
+            super.alignText(buttonWhiteMetrics, buttonBlueMetrics);
+            sqrtWidth = buttonBlueMetrics.stringWidth("\u221A");  // √
+            blueHeight = buttonBlueMetrics.getAscent();
+        }
+
+        @Override
+        protected void drawBlueLabel(Graphics2D g, int offsetX, int offsetY) {
+            // Draw a combining overline, shifted over to the right by the better part
+            // of the width of the square root sign.  We also scoot the x up a bit, so the
+            // line matches the horizontal part of the square root symbol.
+            // This isn't perfect, and it might even make it worse with some fonts,
+            // but on balance I think there's a better chance it will look good this
+            // way.
+            int x = blueX + offsetX;
+            int y = blueY + offsetY;
+            g.drawString("\u221A", x, y);   // √
+            int shiftUp = blueHeight / 10;
+            if (shiftUp == 0) {
+                shiftUp = 1;
+            }
+            y -= shiftUp;
+            x += sqrtWidth;
+            g.drawString(" \u0305", x, y);  // I'm not sure why, but this makes the bar wider
+            g.drawString("x\u0305", x, y);
         }
     }
 }

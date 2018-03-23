@@ -188,7 +188,7 @@ public class fmMain extends javax.swing.JFrame {
         bnGTO = new com.emmetgray.wrpn.GButton();
         bnHEX = new com.emmetgray.wrpn.GButton();
         bnDEC = new com.emmetgray.wrpn.GButton();
-        bnOCT = new com.emmetgray.wrpn.GButton();
+        bnOCT = new com.emmetgray.wrpn.GButton.Sqrt();
         bnBIN = new com.emmetgray.wrpn.GButton();
         bn4 = new com.emmetgray.wrpn.GButton();
         bn5 = new com.emmetgray.wrpn.GButton();
@@ -328,7 +328,7 @@ public class fmMain extends javax.swing.JFrame {
         pnCalcFace.setIcon(calcFaceIcon);
         pnCalcFace.setVerifyInputWhenFocusTarget(false);
         pnCalcFace.setBounds(0, 0, 512, 320);
-        lastFaceBounds = null;
+        lastFaceBounds = null;  // Just being conservative.
         jLayeredPane1.add(pnCalcFace, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         buttonIcons = new ButtonIcons("Bn.png", "BnDown.png");
@@ -508,7 +508,7 @@ public class fmMain extends javax.swing.JFrame {
         bnOCT.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnOCT.setWhiteLabel("OCT");
         bnOCT.setBlueLabel("\u221Ax\u0305");   // √x with "combining overline"
-        bnOCT.setKeyCode(37);                  // TODO:  This doesn't look great
+        bnOCT.setKeyCode(37);                  // See also GButton.Sqrt's paint method
         bnOCT.setName("");
         bnOCT.setOriginalX(215);
         bnOCT.setOriginalY(162);
@@ -1233,11 +1233,11 @@ public class fmMain extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jLayeredPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 512, Short.MAX_VALUE)
+                .addComponent(jLayeredPane1, CALC_WIDTH, CALC_WIDTH, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jLayeredPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
+                .addComponent(jLayeredPane1, CALC_HEIGHT, CALC_HEIGHT, Short.MAX_VALUE)
         );
 
         pack();
@@ -1249,16 +1249,17 @@ public class fmMain extends javax.swing.JFrame {
     private void fmMain_Resized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_fmMain_Resized
         int x, y, width, height;
 
-        // resize the Layered Panel and Label
-        jLayeredPane1.setBounds(0, 0, this.getContentPane().getBounds().width, this.getContentPane().getBounds().height);
-        pnCalcFace.setBounds(0, 0, this.getContentPane().getBounds().width, this.getContentPane().getBounds().height);
-
-        // now resize the background graphics in the Label
         Rectangle bounds = getContentPane().getBounds();
+
         if (bounds.equals(lastFaceBounds)) {
             return;
         }
         lastFaceBounds = bounds;
+
+        // resize the Layered Panel and Label
+        jLayeredPane1.setBounds(0, 0, bounds.width, bounds.height);
+        pnCalcFace.setBounds(0, 0, bounds.width, bounds.height);
+        // now resize the background graphics in the Label
         pnCalcFace.setIcon(new ImageIcon(
                 calcFaceImage.getScaledInstance(bounds.width, bounds.height, Image.SCALE_SMOOTH)));
 
@@ -2548,9 +2549,19 @@ public class fmMain extends javax.swing.JFrame {
 
             @Override
             public void run() {
-                fmMain main_form = new fmMain();
+                final fmMain main_form = new fmMain();
                 main_form.setLocationByPlatform(true);
-                main_form.setVisible(true);
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        main_form.setVisible(true);
+                        // Doing this even later might help with the
+                        // redisplay-on-launch problem, and it can't hurt.
+                        // On Ubuntu, I'm still seeing a first resize to
+                        // 512x320, then, after setVisible(), a second resize
+                        // to 522x350.
+                    }
+                });
             }
         });
     }
