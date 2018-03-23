@@ -273,7 +273,7 @@ public class fmMain extends javax.swing.JFrame {
         mHelpAbout = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(528, 381));
+        setMinimumSize(new java.awt.Dimension(CALC_WIDTH, CALC_HEIGHT));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
