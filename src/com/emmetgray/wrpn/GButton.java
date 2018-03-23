@@ -198,9 +198,9 @@ public class GButton extends JButton {
             if (shiftLeft == 0) {
                 shiftLeft = 1;
             }
+            // TODO:  Make the shiftLeft factor and minimum be items that can be configured.
             y -= shiftUp;
             x += sqrtWidth - shiftLeft;
-            // g.drawString(" \u0305", x, y);  // I'm not sure why, but this makes the bar wider
             g.drawString("x\u0305", x, y);
         }
     }
