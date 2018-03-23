@@ -1,3 +1,19 @@
+/*
+   Portions of this file copyright 2018 Bill Foote
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 package com.emmetgray.wrpn;
 
 import java.awt.*;
@@ -14,18 +30,47 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class fmMain extends javax.swing.JFrame {
 
     static java.util.Properties prop;
-    final int CALC_WIDTH = 512;
-    final int CALC_HEIGHT = 320;
-    final int DISPLAY_WIDTH = 320;
-    final int DISPLAY_HEIGHT = 38;
-    final int BUTTON_WIDTH = 37;
-    final int BUTTON_HEIGHT = 33;
+    final static int CALC_WIDTH = 512;
+    final static int CALC_HEIGHT = 320;
+    final static int DISPLAY_WIDTH = 320;
+    final static int DISPLAY_HEIGHT = 38;
+    final static int BUTTON_WIDTH = 37;
+    final static int BUTTON_HEIGHT = 33;
     private static CalcState cs;
     private static Calculator c;
 
     private Font tbDisplayFontSmall;
     private Font tbDisplayFontLarge;
     private Rectangle lastFaceBounds = null;
+
+    private Image calcFaceImage;
+
+    private static class ButtonIcons {
+        ImageIcon buttonIcon;
+        ImageIcon buttonPressedIcon;
+        Image buttonImage;
+        Image buttonPressedImage;
+
+        ButtonIcons(String name, String downName) {
+            buttonIcon = new ImageIcon(getClass().getResource("/com/emmetgray/wrpn/resources/" + name));
+            buttonImage = buttonIcon.getImage();
+            buttonPressedIcon = new ImageIcon(getClass().getResource("/com/emmetgray/wrpn/resources/" + downName));
+            buttonPressedImage = buttonPressedIcon.getImage();
+        }
+
+        void scaleTo(int width, int height) {
+            buttonIcon = new ImageIcon(buttonImage.getScaledInstance(width, height, Image.SCALE_SMOOTH));
+            buttonPressedIcon = new ImageIcon(buttonPressedImage.getScaledInstance(width, height, Image.SCALE_SMOOTH));
+        }
+    }
+    private ButtonIcons buttonIcons;
+    private ButtonIcons enterButtonIcons;
+    private ButtonIcons yellowButtonIcons;
+    private ButtonIcons blueButtonIcons;
+
+    private Color yellowFaceColor = Color.YELLOW;   // that's what was in the original PNG
+    private Color greyFaceColor = new Color(231, 231, 231);
+    private Color bgFaceColor = new Color(66, 66, 66);
 
     public fmMain() {
         initComponents();
@@ -128,7 +173,7 @@ public class fmMain extends javax.swing.JFrame {
         lbCarry = new javax.swing.JLabel();
         lbOverflow = new javax.swing.JLabel();
         lbPrgm = new javax.swing.JLabel();
-        pnCalcFace = new javax.swing.JLabel();
+        pnCalcFace = new CalcFace();
         bnA = new com.emmetgray.wrpn.GButton();
         bnB = new com.emmetgray.wrpn.GButton();
         bnC = new com.emmetgray.wrpn.GButton();
@@ -160,8 +205,8 @@ public class fmMain extends javax.swing.JFrame {
         bn3 = new com.emmetgray.wrpn.GButton();
         bnMin = new com.emmetgray.wrpn.GButton();
         bnON = new com.emmetgray.wrpn.GButton();
-        bnFKey = new com.emmetgray.wrpn.GButton();
-        bnGKey = new com.emmetgray.wrpn.GButton();
+        bnFKey = new com.emmetgray.wrpn.GButton.Shift();
+        bnGKey = new com.emmetgray.wrpn.GButton.Shift();
         bnSTO = new com.emmetgray.wrpn.GButton();
         bnRCL = new com.emmetgray.wrpn.GButton();
         bn0 = new com.emmetgray.wrpn.GButton();
@@ -279,12 +324,22 @@ public class fmMain extends javax.swing.JFrame {
         lbPrgm.setBounds(320, 55, 30, 12);
         jLayeredPane1.add(lbPrgm, javax.swing.JLayeredPane.MODAL_LAYER);
 
-        pnCalcFace.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/emmetgray/wrpn/resources/Background.png"))); // NOI18N
+        ImageIcon calcFaceIcon = new ImageIcon(getClass().
+                getResource("/com/emmetgray/wrpn/resources/Background.png"));
+        calcFaceImage = calcFaceIcon.getImage();
+        pnCalcFace.setIcon(calcFaceIcon);
         pnCalcFace.setVerifyInputWhenFocusTarget(false);
-        lastFaceBounds = new Rectangle(0, 0, 512, 320);
-        pnCalcFace.setBounds(lastFaceBounds);
+        pnCalcFace.setBounds(0, 0, 512, 320);
+        lastFaceBounds = null;
         jLayeredPane1.add(pnCalcFace, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
+        buttonIcons = new ButtonIcons("Bn.png", "BnDown.png");
+        enterButtonIcons = new ButtonIcons("BnEnt.png", "BnEntDn.png");
+        yellowButtonIcons = new ButtonIcons("BnFkey.png", "BnFkeyDn.png");
+        blueButtonIcons = new ButtonIcons("BnGkey.png", "BnGkeyDn.png");
+
+        bnA.setIcon(buttonIcons.buttonIcon);
+        bnA.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnA.setWhiteLabel("A");
         bnA.setBlueLabel("LJ");
         bnA.setKeyCode(10);
@@ -295,6 +350,8 @@ public class fmMain extends javax.swing.JFrame {
         bnA.setBounds(31, 110, 37, 33);
         jLayeredPane1.add(bnA, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnB.setIcon(buttonIcons.buttonIcon);
+        bnB.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnB.setWhiteLabel("B");
         bnB.setBlueLabel("ASR");
         bnB.setKeyCode(11);
@@ -305,6 +362,8 @@ public class fmMain extends javax.swing.JFrame {
         bnB.setBounds(77, 110, 37, 33);
         jLayeredPane1.add(bnB, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnC.setIcon(buttonIcons.buttonIcon);
+        bnC.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnC.setWhiteLabel("C");
         bnC.setBlueLabel("RLC");
         bnC.setKeyCode(12);
@@ -315,6 +374,8 @@ public class fmMain extends javax.swing.JFrame {
         bnC.setBounds(123, 111, 37, 33);
         jLayeredPane1.add(bnC, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnD.setIcon(buttonIcons.buttonIcon);
+        bnD.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnD.setWhiteLabel("D");
         bnD.setBlueLabel("RRC");
         bnD.setKeyCode(13);
@@ -325,6 +386,8 @@ public class fmMain extends javax.swing.JFrame {
         bnD.setBounds(169, 111, 37, 33);
         jLayeredPane1.add(bnD, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnE.setIcon(buttonIcons.buttonIcon);
+        bnE.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnE.setWhiteLabel("E");
         bnE.setBlueLabel("RCLn");
         bnE.setKeyCode(14);
@@ -335,6 +398,8 @@ public class fmMain extends javax.swing.JFrame {
         bnE.setBounds(215, 111, 37, 33);
         jLayeredPane1.add(bnE, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnF.setIcon(buttonIcons.buttonIcon);
+        bnF.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnF.setWhiteLabel("F");
         bnF.setBlueLabel("RRCn");
         bnF.setKeyCode(15);
@@ -345,6 +410,8 @@ public class fmMain extends javax.swing.JFrame {
         bnF.setBounds(261, 111, 37, 33);
         jLayeredPane1.add(bnF, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bn7.setIcon(buttonIcons.buttonIcon);
+        bn7.setPressedIcon(buttonIcons.buttonPressedIcon);
         bn7.setWhiteLabel("7");
         bn7.setBlueLabel("#B");
         bn7.setKeyCode(7);
@@ -355,6 +422,8 @@ public class fmMain extends javax.swing.JFrame {
         bn7.setBounds(307, 111, 37, 33);
         jLayeredPane1.add(bn7, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bn8.setIcon(buttonIcons.buttonIcon);
+        bn8.setPressedIcon(buttonIcons.buttonPressedIcon);
         bn8.setWhiteLabel("8");
         bn8.setBlueLabel("ABS");
         bn8.setKeyCode(8);
@@ -365,6 +434,8 @@ public class fmMain extends javax.swing.JFrame {
         bn8.setBounds(353, 111, 37, 33);
         jLayeredPane1.add(bn8, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bn9.setIcon(buttonIcons.buttonIcon);
+        bn9.setPressedIcon(buttonIcons.buttonPressedIcon);
         bn9.setWhiteLabel("9");
         bn9.setBlueLabel("DBLR");
         bn9.setKeyCode(9);
@@ -375,6 +446,8 @@ public class fmMain extends javax.swing.JFrame {
         bn9.setBounds(399, 111, 37, 33);
         jLayeredPane1.add(bn9, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnDiv.setIcon(buttonIcons.buttonIcon);
+        bnDiv.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnDiv.setWhiteLabel("\u00F7");  // ÷
         bnDiv.setBlueLabel("DBL\u00F7"); // DBL÷
         bnDiv.setKeyCode(16);
@@ -385,6 +458,8 @@ public class fmMain extends javax.swing.JFrame {
         bnDiv.setBounds(445, 111, 37, 33);
         jLayeredPane1.add(bnDiv, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnGSB.setIcon(buttonIcons.buttonIcon);
+        bnGSB.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnGSB.setWhiteLabel("GSB");
         bnGSB.setBlueLabel("RTN");
         bnGSB.setKeyCode(33);
@@ -395,6 +470,8 @@ public class fmMain extends javax.swing.JFrame {
         bnGSB.setBounds(31, 162, 37, 33);
         jLayeredPane1.add(bnGSB, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnGTO.setIcon(buttonIcons.buttonIcon);
+        bnGTO.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnGTO.setWhiteLabel("GTO");
         bnGTO.setBlueLabel("LBL");
         bnGTO.setKeyCode(34);
@@ -405,6 +482,8 @@ public class fmMain extends javax.swing.JFrame {
         bnGTO.setBounds(77, 162, 37, 33);
         jLayeredPane1.add(bnGTO, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnHEX.setIcon(buttonIcons.buttonIcon);
+        bnHEX.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnHEX.setWhiteLabel("HEX");
         bnHEX.setBlueLabel("DSZ");
         bnHEX.setKeyCode(35);
@@ -415,6 +494,8 @@ public class fmMain extends javax.swing.JFrame {
         bnHEX.setBounds(123, 162, 37, 33);
         jLayeredPane1.add(bnHEX, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnDEC.setIcon(buttonIcons.buttonIcon);
+        bnDEC.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnDEC.setWhiteLabel("DEC");
         bnDEC.setBlueLabel("ISZ");
         bnDEC.setKeyCode(36);
@@ -425,6 +506,8 @@ public class fmMain extends javax.swing.JFrame {
         bnDEC.setBounds(169, 162, 37, 33);
         jLayeredPane1.add(bnDEC, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnOCT.setIcon(buttonIcons.buttonIcon);
+        bnOCT.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnOCT.setWhiteLabel("OCT");
         bnOCT.setBlueLabel("\u221Ax\u0305");   // √x with "combining overline"
         bnOCT.setKeyCode(37);                  // TODO:  This doesn't look great
@@ -435,6 +518,8 @@ public class fmMain extends javax.swing.JFrame {
         bnOCT.setBounds(215, 162, 37, 33);
         jLayeredPane1.add(bnOCT, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnBIN.setIcon(buttonIcons.buttonIcon);
+        bnBIN.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnBIN.setWhiteLabel("BIN");
         bnBIN.setBlueLabel("1/x");
         bnBIN.setKeyCode(38);
@@ -445,6 +530,8 @@ public class fmMain extends javax.swing.JFrame {
         bnBIN.setBounds(261, 162, 37, 33);
         jLayeredPane1.add(bnBIN, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bn4.setIcon(buttonIcons.buttonIcon);
+        bn4.setPressedIcon(buttonIcons.buttonPressedIcon);
         bn4.setWhiteLabel("4");
         bn4.setBlueLabel("SF");
         bn4.setKeyCode(4);
@@ -455,6 +542,8 @@ public class fmMain extends javax.swing.JFrame {
         bn4.setBounds(307, 162, 37, 33);
         jLayeredPane1.add(bn4, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bn5.setIcon(buttonIcons.buttonIcon);
+        bn5.setPressedIcon(buttonIcons.buttonPressedIcon);
         bn5.setWhiteLabel("5");
         bn5.setBlueLabel("CF");
         bn5.setKeyCode(5);
@@ -465,6 +554,8 @@ public class fmMain extends javax.swing.JFrame {
         bn5.setBounds(353, 162, 37, 33);
         jLayeredPane1.add(bn5, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bn6.setIcon(buttonIcons.buttonIcon);
+        bn6.setPressedIcon(buttonIcons.buttonPressedIcon);
         bn6.setWhiteLabel("6");
         bn6.setBlueLabel("F?");
         bn6.setKeyCode(6);
@@ -475,6 +566,8 @@ public class fmMain extends javax.swing.JFrame {
         bn6.setBounds(399, 162, 37, 33);
         jLayeredPane1.add(bn6, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnMul.setIcon(buttonIcons.buttonIcon);
+        bnMul.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnMul.setWhiteLabel("X");
         bnMul.setBlueLabel("DBL\u00D7");  // DBL×
         bnMul.setKeyCode(32);
@@ -485,6 +578,8 @@ public class fmMain extends javax.swing.JFrame {
         bnMul.setBounds(445, 162, 37, 33);
         jLayeredPane1.add(bnMul, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnRS.setIcon(buttonIcons.buttonIcon);
+        bnRS.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnRS.setWhiteLabel("R/S");
         bnRS.setBlueLabel("P/R");
         bnRS.setKeyCode(49);
@@ -495,6 +590,8 @@ public class fmMain extends javax.swing.JFrame {
         bnRS.setBounds(31, 213, 37, 33);
         jLayeredPane1.add(bnRS, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnSST.setIcon(buttonIcons.buttonIcon);
+        bnSST.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnSST.setWhiteLabel("SST");
         bnSST.setBlueLabel("BST");
         bnSST.setKeyCode(50);
@@ -505,6 +602,8 @@ public class fmMain extends javax.swing.JFrame {
         bnSST.setBounds(77, 213, 37, 33);
         jLayeredPane1.add(bnSST, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnRol.setIcon(buttonIcons.buttonIcon);
+        bnRol.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnRol.setWhiteLabel("R\u2193");  // R↓
         bnRol.setBlueLabel("R\u2191");   // R↑
         bnRol.setKeyCode(51);
@@ -515,7 +614,9 @@ public class fmMain extends javax.swing.JFrame {
         bnRol.setBounds(123, 213, 37, 33);
         jLayeredPane1.add(bnRol, javax.swing.JLayeredPane.PALETTE_LAYER);
 
-        bnXY.setWhiteLabel("x\u2277y");   // x≷y
+        bnXY.setIcon(buttonIcons.buttonIcon);
+        bnXY.setPressedIcon(buttonIcons.buttonPressedIcon);
+        bnXY.setWhiteLabel("x\u2B0Cy");   // x⬌y
         bnXY.setBlueLabel("PSE");
         bnXY.setKeyCode(52);
         bnXY.setName("");
@@ -525,6 +626,8 @@ public class fmMain extends javax.swing.JFrame {
         bnXY.setBounds(169, 213, 37, 33);
         jLayeredPane1.add(bnXY, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnBSP.setIcon(buttonIcons.buttonIcon);
+        bnBSP.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnBSP.setWhiteLabel("BSP");
         bnBSP.setBlueLabel("CLx");
         bnBSP.setKeyCode(53);
@@ -535,6 +638,8 @@ public class fmMain extends javax.swing.JFrame {
         bnBSP.setBounds(215, 213, 37, 33);
         jLayeredPane1.add(bnBSP, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnEnt.setIcon(enterButtonIcons.buttonIcon);
+        bnEnt.setPressedIcon(enterButtonIcons.buttonPressedIcon);
         bnEnt.setWhiteLabel("ENTER");
         bnEnt.setBlueLabel("LSTx");
         bnEnt.setKeyCode(54);
@@ -545,6 +650,8 @@ public class fmMain extends javax.swing.JFrame {
         bnEnt.setBounds(261, 213, 37, 84);
         jLayeredPane1.add(bnEnt, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bn1.setIcon(buttonIcons.buttonIcon);
+        bn1.setPressedIcon(buttonIcons.buttonPressedIcon);
         bn1.setWhiteLabel("1");
         bn1.setBlueLabel("x\u2264y");  // x≤y
         bn1.setKeyCode(1);
@@ -555,6 +662,8 @@ public class fmMain extends javax.swing.JFrame {
         bn1.setBounds(307, 213, 37, 33);
         jLayeredPane1.add(bn1, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bn2.setIcon(buttonIcons.buttonIcon);
+        bn2.setPressedIcon(buttonIcons.buttonPressedIcon);
         bn2.setWhiteLabel("2");
         bn2.setBlueLabel("x<0");
         bn2.setKeyCode(2);
@@ -565,6 +674,8 @@ public class fmMain extends javax.swing.JFrame {
         bn2.setBounds(353, 213, 37, 33);
         jLayeredPane1.add(bn2, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bn3.setIcon(buttonIcons.buttonIcon);
+        bn3.setPressedIcon(buttonIcons.buttonPressedIcon);
         bn3.setWhiteLabel("3");
         bn3.setBlueLabel("x>y");
         bn3.setKeyCode(3);
@@ -575,6 +686,8 @@ public class fmMain extends javax.swing.JFrame {
         bn3.setBounds(399, 213, 37, 33);
         jLayeredPane1.add(bn3, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnMin.setIcon(buttonIcons.buttonIcon);
+        bnMin.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnMin.setWhiteLabel("-");
         bnMin.setBlueLabel("x>0");
         bnMin.setKeyCode(48);
@@ -585,6 +698,8 @@ public class fmMain extends javax.swing.JFrame {
         bnMin.setBounds(445, 213, 37, 33);
         jLayeredPane1.add(bnMin, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnON.setIcon(buttonIcons.buttonIcon);
+        bnON.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnON.setWhiteLabel("ON");
         bnON.setBlueLabel("");
         bnON.setKeyCode(65);
@@ -595,8 +710,9 @@ public class fmMain extends javax.swing.JFrame {
         bnON.setBounds(31, 264, 37, 33);
         jLayeredPane1.add(bnON, javax.swing.JLayeredPane.PALETTE_LAYER);
 
-        // TODO:  Make it yellow
-        bnFKey.setWhiteLabel("f");
+        bnFKey.setIcon(yellowButtonIcons.buttonIcon);
+        bnFKey.setPressedIcon(yellowButtonIcons.buttonPressedIcon);
+        bnFKey.setWhiteLabel(" f");
         bnFKey.setBlueLabel("");
         bnFKey.setKeyCode(66);
         bnFKey.setName("");
@@ -606,8 +722,9 @@ public class fmMain extends javax.swing.JFrame {
         bnFKey.setBounds(77, 264, 37, 33);
         jLayeredPane1.add(bnFKey, javax.swing.JLayeredPane.PALETTE_LAYER);
 
-        // TODO:  Make it blue
-        bnGKey.setWhiteLabel("g");
+        bnGKey.setIcon(blueButtonIcons.buttonIcon);
+        bnGKey.setPressedIcon(blueButtonIcons.buttonPressedIcon);
+        bnGKey.setWhiteLabel(" g");
         bnGKey.setBlueLabel("");
         bnGKey.setKeyCode(67);
         bnGKey.setName("");
@@ -617,6 +734,8 @@ public class fmMain extends javax.swing.JFrame {
         bnGKey.setBounds(123, 264, 37, 33);
         jLayeredPane1.add(bnGKey, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnSTO.setIcon(buttonIcons.buttonIcon);
+        bnSTO.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnSTO.setWhiteLabel("STO");
         bnSTO.setBlueLabel("\u2B9C"); // ⮜
         bnSTO.setKeyCode(68);
@@ -627,6 +746,8 @@ public class fmMain extends javax.swing.JFrame {
         bnSTO.setBounds(169, 264, 37, 33);
         jLayeredPane1.add(bnSTO, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnRCL.setIcon(buttonIcons.buttonIcon);
+        bnRCL.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnRCL.setWhiteLabel("RCL");
         bnRCL.setBlueLabel("\u2B9E"); // ⮞
         bnRCL.setKeyCode(69);
@@ -637,6 +758,8 @@ public class fmMain extends javax.swing.JFrame {
         bnRCL.setBounds(215, 264, 37, 33);
         jLayeredPane1.add(bnRCL, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bn0.setIcon(buttonIcons.buttonIcon);
+        bn0.setPressedIcon(buttonIcons.buttonPressedIcon);
         bn0.setWhiteLabel("0");
         bn0.setBlueLabel("x\u2260y");  // x≠y
         bn0.setName("");
@@ -646,6 +769,8 @@ public class fmMain extends javax.swing.JFrame {
         bn0.setBounds(307, 264, 37, 33);
         jLayeredPane1.add(bn0, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnDp.setIcon(buttonIcons.buttonIcon);
+        bnDp.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnDp.setWhiteLabel("\u2219");   // ∙
         bnDp.setBlueLabel("x\u22600");  // x≠0
         bnDp.setKeyCode(72);
@@ -656,6 +781,8 @@ public class fmMain extends javax.swing.JFrame {
         bnDp.setBounds(353, 264, 37, 33);
         jLayeredPane1.add(bnDp, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnCHS.setIcon(buttonIcons.buttonIcon);
+        bnCHS.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnCHS.setWhiteLabel("CHS");
         bnCHS.setBlueLabel("x=y");
         bnCHS.setKeyCode(73);
@@ -666,6 +793,8 @@ public class fmMain extends javax.swing.JFrame {
         bnCHS.setBounds(399, 264, 37, 33);
         jLayeredPane1.add(bnCHS, javax.swing.JLayeredPane.PALETTE_LAYER);
 
+        bnPls.setIcon(buttonIcons.buttonIcon);
+        bnPls.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnPls.setWhiteLabel("+");
         bnPls.setBlueLabel("x=0");
         bnPls.setKeyCode(64);
@@ -675,6 +804,44 @@ public class fmMain extends javax.swing.JFrame {
         bnPls.setPreferredSize(new java.awt.Dimension(37, 33));
         bnPls.setBounds(445, 264, 37, 33);
         jLayeredPane1.add(bnPls, javax.swing.JLayeredPane.PALETTE_LAYER);
+
+        pnCalcFace.yellowText = new CalcFace.YellowText[] {
+                new CalcFace.YellowText(bnA, "SL"),
+                new CalcFace.YellowText(bnB, "SR"),
+                new CalcFace.YellowText(bnC, "RL"),
+                new CalcFace.YellowText(bnD, "RR"),
+                new CalcFace.YellowText(bnE, "RLn"),
+                new CalcFace.YellowText(bnF, "RRn"),
+                new CalcFace.YellowText(bn7, "MASKL"),
+                new CalcFace.YellowText(bn8, "MASKR"),
+                new CalcFace.YellowText(bn9, "RMD"),
+                new CalcFace.YellowText(bnDiv, "XOR"),
+                new CalcFace.YellowText(bnGSB, "x\u2B0C(i)"),   // x⬌(i)
+                new CalcFace.YellowText(bnGTO, "x\u2B0CI"),   // x⬌I
+                new CalcFace.YellowMultiText(bnHEX, bnBIN, 0, "SHOW"),
+                new CalcFace.YellowText(bn4, "SB"),
+                new CalcFace.YellowText(bn5, "CB"),
+                new CalcFace.YellowText(bn6, "B?"),
+                new CalcFace.YellowText(bnMul, "AND"),
+                new CalcFace.YellowText(bnRS, "(i)"),
+                new CalcFace.YellowText(bnSST, "I"),
+                new CalcFace.YellowMultiText(bnRol, bnBSP, 1, "CLEAR"),
+                new CalcFace.YellowText(bnRol, "PRGM"),
+                new CalcFace.YellowText(bnXY, "REG"),
+                new CalcFace.YellowText(bnBSP, "PREFIX"),
+                new CalcFace.YellowText(bnEnt, "WINDOW"),
+                new CalcFace.YellowMultiText(bn1, bn3, 1, "SET COMPL"),
+                new CalcFace.YellowText(bn1, "1'S"),
+                new CalcFace.YellowText(bn2, "2'S"),
+                new CalcFace.YellowText(bn3, "UNSGN"),
+                new CalcFace.YellowText(bnMin, "NOT"),
+                new CalcFace.YellowText(bnSTO, "WSIZE"),
+                new CalcFace.YellowText(bnRCL, "FLOAT"),
+                new CalcFace.YellowText(bn0, "MEM"),
+                new CalcFace.YellowText(bnDp, "STATUS"),
+                new CalcFace.YellowText(bnCHS, "EEX"),
+                new CalcFace.YellowText(bnPls, "OR")
+        };
 
         mFile.setText("File");
 
@@ -1068,14 +1235,15 @@ public class fmMain extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLayeredPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 512, Short.MAX_VALUE)
+                .addComponent(jLayeredPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 512, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLayeredPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
+                .addComponent(jLayeredPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
         );
 
         pack();
+        setFonts();
     }
 
     // move and resize the controls to match the new size of the form
@@ -1088,28 +1256,28 @@ public class fmMain extends javax.swing.JFrame {
 
         // now resize the background graphics in the Label
         Rectangle bounds = getContentPane().getBounds();
-        if (!bounds.equals(lastFaceBounds)) {
-            Image img = new ImageIcon(getClass()
-                    .getResource("/com/emmetgray/wrpn/resources/Background.png")).getImage();
-            pnCalcFace.setIcon(new ImageIcon(
-                    img.getScaledInstance(bounds.width, bounds.height, Image.SCALE_SMOOTH)));
-            lastFaceBounds = bounds;
+        if (bounds.equals(lastFaceBounds)) {
+            return;
         }
+        lastFaceBounds = bounds;
+        pnCalcFace.setIcon(new ImageIcon(
+                calcFaceImage.getScaledInstance(bounds.width, bounds.height, Image.SCALE_SMOOTH)));
 
         width = BUTTON_WIDTH * bounds.width / CALC_WIDTH;
         height = BUTTON_HEIGHT * bounds.height / CALC_HEIGHT;
+        buttonIcons.scaleTo(width, height);
+        yellowButtonIcons.scaleTo(width, height);
+        blueButtonIcons.scaleTo(width, height);
 
-        if (16 * bounds.width / CALC_WIDTH <= 16 * bounds.height / CALC_HEIGHT) {
+        if (512 * bounds.width / CALC_WIDTH <= 512 * bounds.height / CALC_HEIGHT) {
             GButton.setDrawScale(bounds.width, CALC_WIDTH);
+            pnCalcFace.setDrawScale(bounds.width, CALC_WIDTH);
         } else {
             GButton.setDrawScale(bounds.height, CALC_HEIGHT);
+            pnCalcFace.setDrawScale(bounds.height, CALC_HEIGHT);
         }
-        Font buttonWhiteFont = new Font("Lucidia Sans", Font.BOLD, GButton.scale(15));
-        Font buttonBlueFont = new Font("Lucidia Sans", Font.BOLD, GButton.scale(9));
-        GButton.setWhiteFont(buttonWhiteFont);
-        GButton.setBlueFont(buttonBlueFont);
-        FontMetrics buttonWhiteMetrics = bn0.getFontMetrics(buttonWhiteFont);
-        FontMetrics buttonBlueMetrics = bn0.getFontMetrics(buttonBlueFont);
+        GButton.setDrawScaleX(bounds.width, CALC_WIDTH);
+        GButton.setDrawScaleY(bounds.height, CALC_HEIGHT);
 
         // resize and move the buttons
         for (Component comp : jLayeredPane1.getComponents()) {
@@ -1129,9 +1297,23 @@ public class fmMain extends javax.swing.JFrame {
                 }
 
                 bn.setBounds(x, y, width, button_height);
-                bn.alignText(buttonWhiteMetrics, buttonBlueMetrics);
+                if (bn == bnEnt) {
+                    enterButtonIcons.scaleTo(width, button_height);
+                    bn.setIcon(enterButtonIcons.buttonIcon);
+                    bn.setPressedIcon(enterButtonIcons.buttonPressedIcon);
+                } else if (bn == bnFKey) {
+                    bn.setIcon(yellowButtonIcons.buttonIcon);
+                    bn.setPressedIcon(yellowButtonIcons.buttonPressedIcon);
+                } else if (bn == bnGKey) {
+                    bn.setIcon(blueButtonIcons.buttonIcon);
+                    bn.setPressedIcon(blueButtonIcons.buttonPressedIcon);
+                } else {
+                    bn.setIcon(buttonIcons.buttonIcon);
+                    bn.setPressedIcon(buttonIcons.buttonPressedIcon);
+                }
             }
         }
+        setFonts();
 
         // Move and resize the display textbox
         x = 54 * this.getContentPane().getBounds().width / CALC_WIDTH;
@@ -1171,6 +1353,26 @@ public class fmMain extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_fmMain_Resized
+
+    private void setFonts() {
+        Font buttonWhiteFont = new Font("Lucidia Sans", Font.BOLD, GButton.scale(28)/2);
+        Font buttonBlueFont = new Font("Lucidia Sans", Font.BOLD, GButton.scale(9));
+        GButton.setWhiteFont(buttonWhiteFont);
+        GButton.setBlueFont(buttonBlueFont);
+        FontMetrics buttonWhiteMetrics = bn0.getFontMetrics(buttonWhiteFont);
+        FontMetrics buttonBlueMetrics = bn0.getFontMetrics(buttonBlueFont);
+        for (Component comp : jLayeredPane1.getComponents()) {
+            if (comp instanceof GButton) {
+                GButton bn = (GButton) comp;
+                bn.alignText(buttonWhiteMetrics, buttonBlueMetrics);
+            }
+        }
+
+        pnCalcFace.setupYellow(yellowFaceColor, buttonBlueFont, buttonBlueMetrics);
+        Font greyLabelFont = new Font("Lucidia Sans", Font.BOLD, GButton.scale(12));
+        FontMetrics greyLabelMetrics = pnCalcFace.getFontMetrics(greyLabelFont);
+        pnCalcFace.setupGreyLabel(greyFaceColor, bgFaceColor, greyLabelFont, greyLabelMetrics);
+    }
 
     private float calculateDisplayFont(Font ft, String str, int width) {
         int small = 1;
@@ -2135,7 +2337,7 @@ public class fmMain extends javax.swing.JFrame {
             }
             cs.Deserialize(sb.toString());
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Could not open the state file\n" + ex.getMessage(), "Error Opening State", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Could not open the state file " + FileName + "\n" + ex.getMessage(), "Error Opening State", JOptionPane.ERROR_MESSAGE);
         } finally {
             if (sr != null) {
                 try {
@@ -2457,7 +2659,7 @@ public class fmMain extends javax.swing.JFrame {
     private javax.swing.JCheckBoxMenuItem mOptionUnsigned;
     private javax.swing.JMenu mOptions;
     private javax.swing.JMenuBar mbMain;
-    private javax.swing.JLabel pnCalcFace;
+    private CalcFace pnCalcFace;
     private javax.swing.JTextPane tbDisplay;
     // End of variables declaration//GEN-END:variables
 }

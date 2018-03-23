@@ -1,3 +1,19 @@
+/*
+   Portions of this file copyright 2018 Bill Foote
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 package com.emmetgray.wrpn;
 
 import javax.swing.*;
@@ -20,13 +36,12 @@ public class GButton extends JButton {
     // Colors taken from the original button image files:
     private final static Color blueColor = new Color(0, 100, 255);
     private final static Color whiteColor = new Color(255,255,255);
-    private final static Color bgColor = new Color(67,67,67);
-    private final static Color outlineColor = new Color(0, 0, 0);
-    private final static Color topColor = new Color(22, 22, 22);
-    private final static Color midColor = new Color(41, 41, 41);
-    private final static Color bottomColor = topColor;
     private static int drawScaleNumerator = 1;
     private static int drawScaleDenominator = 1;
+    private static int drawScaleNumeratorX = 1;
+    private static int drawScaleDenominatorX = 1;
+    private static int drawScaleNumeratorY= 1;
+    private static int drawScaleDenominatorY = 1;
 
     public static void setBlueFont(Font font) {
         blueFont = font;
@@ -41,8 +56,26 @@ public class GButton extends JButton {
         drawScaleDenominator = denominator;
     }
 
+    public static void setDrawScaleX(int numerator, int denominator) {
+        drawScaleNumeratorX = numerator;
+        drawScaleDenominatorX = denominator;
+    }
+
+    public static void setDrawScaleY(int numerator, int denominator) {
+        drawScaleNumeratorY = numerator;
+        drawScaleDenominatorY = denominator;
+    }
+
     public static int scale(int num) {
         return num * drawScaleNumerator / drawScaleDenominator;
+    }
+
+    public static int scaleX(int num) {
+        return num * drawScaleNumeratorX / drawScaleDenominatorX;
+    }
+
+    public static int scaleY(int num) {
+        return num * drawScaleNumeratorY / drawScaleDenominatorY;
     }
 
     public int getOriginalX() {
@@ -78,99 +111,93 @@ public class GButton extends JButton {
     }
 
     public void alignText(FontMetrics buttonWhiteMetrics, FontMetrics buttonBlueMetrics) {
-        if (whiteLabel == null) {
-            return;
-        }
         int w = getWidth();
         int h = getHeight();
         whiteX = (w - buttonWhiteMetrics.stringWidth(whiteLabel)) / 2;
-        whiteY = scale(23);
+        whiteY = scaleY(20);
         blueX = (w - buttonBlueMetrics.stringWidth(blueLabel)) / 2;
-        blueY = h - scale(3);
+        blueY = h - scaleY(3);
     }
 
     @Override
     public void paint(Graphics legacyG) {
         Graphics2D g = (Graphics2D) legacyG;
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
         boolean pressed = getModel().isPressed();
         int w = getWidth();
         int h = getHeight();
         int x;
         int y;
         int nextY;
-        int one = scale(1);
-        int offset = pressed ? one : 0;
-        if (whiteLabel != null) {
-            g.setColor(bgColor);
-            g.fillRect(0, 0, w, h);
-            g.setColor(outlineColor);
-            g.fillRect(one+offset, one+offset, w-2*one, h-2*one);
+        int oneX = scaleX(1);
+        int oneY = scaleY(1);
+        int offsetX = pressed ? oneX : 0;
+        int offsetY = pressed ? oneY : 0;
 
-            g.setColor(topColor);
-            x = scale(2);
-            y = scale(2);
-            nextY = scale(8);
-            g.fill3DRect(x, y, w - 2*x, nextY - y, !pressed);
+        super.paint(g);
 
-            g.setColor(midColor);
-            y = nextY;
-            nextY = scale(27);
-            g.fill3DRect(x, y, w - 2*x, nextY - y, !pressed);
+        g.setColor(blueColor);
+        g.setFont(blueFont);
+        g.drawString(blueLabel, blueX + offsetX, blueY + offsetY);
 
-            g.setColor(bottomColor);
-            y = nextY;
-            nextY = h - scale(2);
-            g.fill3DRect(x, y, w - 2*x, nextY - y, !pressed);
-
-            g.setColor(blueColor);
-            g.setFont(blueFont);
-            g.drawString(blueLabel, blueX+offset, blueY+offset);
-
-            g.setColor(whiteColor);
-            g.setFont(whiteFont);
-            drawWhiteLabel(g, offset);
-        } else {
-            super.paint(g);
-        }
+        g.setColor(whiteColor);
+        g.setFont(whiteFont);
+        drawWhiteLabel(g, offsetX, offsetY);
     }
 
-    protected void drawWhiteLabel(Graphics2D g, int offset) {
-        g.drawString(whiteLabel, whiteX + offset, whiteY + offset);
-    }
-
-    @Override
-    public void setIcon(Icon icon) {
-        if (whiteLabel == null) {
-            super.setIcon(icon);
-        }
-    }
-
-    @Override
-    public void setPressedIcon(Icon icon) {
-        if (whiteLabel == null) {
-            super.setPressedIcon(icon);
-        }
+    protected void drawWhiteLabel(Graphics2D g, int offsetX, int offsetY) {
+        g.drawString(whiteLabel, whiteX + offsetX, whiteY + offsetY);
     }
 
     public static class Enter extends GButton {
 
         private int whiteHeight;
+        private String[] letters = null;
+        private int[] whiteX;
 
         @Override
         public void alignText(FontMetrics buttonWhiteMetrics, FontMetrics buttonBlueMetrics) {
             super.alignText(buttonWhiteMetrics, buttonBlueMetrics);
-            whiteX = (getWidth() - buttonWhiteMetrics.stringWidth("E")) / 2;
+            if (letters == null) {
+                letters = new String[whiteLabel.length()];
+                for (int i = 0; i < whiteLabel.length(); i++) {
+                    letters[i] = "" + whiteLabel.charAt(i);
+                }
+                whiteX = new int[letters.length];
+            }
+            int w = getWidth();
+            for (int i = 0; i < letters.length; i++) {
+                whiteX[i] = (w - buttonWhiteMetrics.stringWidth(letters[i])) / 2;
+            }
             whiteHeight = buttonWhiteMetrics.getAscent();
         }
 
         @Override
-        protected void drawWhiteLabel(Graphics2D g, int offset) {
+        protected void drawWhiteLabel(Graphics2D g, int offsetX, int offsetY) {
             int y = 0;
-            for (int i = 0; i < whiteLabel.length(); i++)  {
-                char c = whiteLabel.charAt(i);
-                g.drawString(""+c, whiteX + offset, whiteY + offset + y);
+            for (int i = 0; i < letters.length; i++)  {
+                g.drawString(letters[i], whiteX[i] + offsetX, whiteY + offsetY + y);
                 y += whiteHeight;
             }
+        }
+    }
+
+    // For the red and blue keys.  They display the foreground
+    // ("white") text as black.
+    public static class Shift extends GButton {
+
+        private int descent;
+
+        @Override
+        public void alignText(FontMetrics buttonWhiteMetrics, FontMetrics buttonBlueMetrics) {
+            super.alignText(buttonWhiteMetrics, buttonBlueMetrics);
+            descent = buttonWhiteMetrics.getDescent();
+        }
+
+        @Override
+        protected void drawWhiteLabel(Graphics2D g, int offsetX, int offsetY) {
+            g.setColor(Color.BLACK);
+            g.drawString(whiteLabel, whiteX + offsetX - descent, whiteY + offsetY);
         }
     }
 }
