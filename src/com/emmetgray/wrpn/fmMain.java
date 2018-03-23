@@ -68,9 +68,7 @@ public class fmMain extends javax.swing.JFrame {
     private ButtonIcons yellowButtonIcons;
     private ButtonIcons blueButtonIcons;
 
-    private Color yellowFaceColor = Color.YELLOW;   // that's what was in the original PNG
-    private Color greyFaceColor = new Color(231, 231, 231);
-    private Color bgFaceColor = new Color(66, 66, 66);
+    private ScaleInfo scaleInfo = new ScaleInfo();
 
     public fmMain() {
         initComponents();
@@ -816,19 +814,19 @@ public class fmMain extends javax.swing.JFrame {
                 new CalcFace.YellowText(bnDiv, "XOR"),
                 new CalcFace.YellowText(bnGSB, "x\u2B0C(i)"),   // x⬌(i)
                 new CalcFace.YellowText(bnGTO, "x\u2B0CI"),   // x⬌I
-                new CalcFace.YellowMultiText(bnHEX, bnBIN, 0, "SHOW"),
+                new CalcFace.YellowMultiText(scaleInfo, bnHEX, bnBIN, 0, "SHOW"),
                 new CalcFace.YellowText(bn4, "SB"),
                 new CalcFace.YellowText(bn5, "CB"),
                 new CalcFace.YellowText(bn6, "B?"),
                 new CalcFace.YellowText(bnMul, "AND"),
                 new CalcFace.YellowText(bnRS, "(i)"),
                 new CalcFace.YellowText(bnSST, "I"),
-                new CalcFace.YellowMultiText(bnRol, bnBSP, 1, "CLEAR"),
+                new CalcFace.YellowMultiText(scaleInfo, bnRol, bnBSP, 1, "CLEAR"),
                 new CalcFace.YellowText(bnRol, "PRGM"),
                 new CalcFace.YellowText(bnXY, "REG"),
                 new CalcFace.YellowText(bnBSP, "PREFIX"),
                 new CalcFace.YellowText(bnEnt, "WINDOW"),
-                new CalcFace.YellowMultiText(bn1, bn3, 1, "SET COMPL"),
+                new CalcFace.YellowMultiText(scaleInfo, bn1, bn3, 1, "SET COMPL"),
                 new CalcFace.YellowText(bn1, "1'S"),
                 new CalcFace.YellowText(bn2, "2'S"),
                 new CalcFace.YellowText(bn3, "UNSGN"),
@@ -1239,9 +1237,16 @@ public class fmMain extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(jLayeredPane1, CALC_HEIGHT, CALC_HEIGHT, Short.MAX_VALUE)
         );
+        for (Component comp : jLayeredPane1.getComponents()) {
+            if (comp instanceof GButton) {
+                GButton bn = (GButton) comp;
+                bn.setScaleInfo(scaleInfo);
+            }
+        }
 
-        pack();
         setFonts();
+        pnCalcFace.resize(scaleInfo);
+        pack();
         setMinimumSize(getSize());
     }
 
@@ -1270,14 +1275,16 @@ public class fmMain extends javax.swing.JFrame {
         blueButtonIcons.scaleTo(width, height);
 
         if (512 * bounds.width / CALC_WIDTH <= 512 * bounds.height / CALC_HEIGHT) {
-            GButton.setDrawScale(bounds.width, CALC_WIDTH);
-            pnCalcFace.setDrawScale(bounds.width, CALC_WIDTH);
+            scaleInfo.drawScaleNumerator = bounds.width;
+            scaleInfo.drawScaleDenominator = CALC_WIDTH;
         } else {
-            GButton.setDrawScale(bounds.height, CALC_HEIGHT);
-            pnCalcFace.setDrawScale(bounds.height, CALC_HEIGHT);
+            scaleInfo.drawScaleNumerator = bounds.height;
+            scaleInfo.drawScaleDenominator = CALC_HEIGHT;
         }
-        GButton.setDrawScaleX(bounds.width, CALC_WIDTH);
-        GButton.setDrawScaleY(bounds.height, CALC_HEIGHT);
+        scaleInfo.drawScaleNumeratorX = bounds.width;
+        scaleInfo.drawScaleDenominatorX = CALC_WIDTH;
+        scaleInfo.drawScaleNumeratorY = bounds.height;
+        scaleInfo.drawScaleDenominatorY = CALC_HEIGHT;
 
         // resize and move the buttons
         for (Component comp : jLayeredPane1.getComponents()) {
@@ -1352,26 +1359,25 @@ public class fmMain extends javax.swing.JFrame {
                 }
             }
         }
+
+        pnCalcFace.resize(scaleInfo);
     }//GEN-LAST:event_fmMain_Resized
 
     private void setFonts() {
-        Font buttonWhiteFont = new Font("Lucidia Sans", Font.BOLD, GButton.scale(28)/2);
-        Font buttonBlueFont = new Font("Lucidia Sans", Font.BOLD, GButton.scale(9));
-        GButton.setWhiteFont(buttonWhiteFont);
-        GButton.setBlueFont(buttonBlueFont);
-        FontMetrics buttonWhiteMetrics = bn0.getFontMetrics(buttonWhiteFont);
-        FontMetrics buttonBlueMetrics = bn0.getFontMetrics(buttonBlueFont);
+        scaleInfo.whiteFont = new Font("Lucidia Sans", Font.BOLD, scaleInfo.scale(28)/2);
+        scaleInfo.whiteFontMetrics = bn0.getFontMetrics(scaleInfo.whiteFont);
+        scaleInfo.blueFont = new Font("Lucidia Sans", Font.BOLD, scaleInfo.scale(9));
+        scaleInfo.blueFontMetrics = bn0.getFontMetrics(scaleInfo.blueFont);
         for (Component comp : jLayeredPane1.getComponents()) {
             if (comp instanceof GButton) {
                 GButton bn = (GButton) comp;
-                bn.alignText(buttonWhiteMetrics, buttonBlueMetrics);
+                bn.alignText();
             }
         }
-
-        pnCalcFace.setupYellow(yellowFaceColor, buttonBlueFont, buttonBlueMetrics);
-        Font greyLabelFont = new Font("Lucidia Sans", Font.BOLD, GButton.scale(12));
-        FontMetrics greyLabelMetrics = pnCalcFace.getFontMetrics(greyLabelFont);
-        pnCalcFace.setupGreyLabel(greyFaceColor, bgFaceColor, greyLabelFont, greyLabelMetrics);
+        scaleInfo.yellowFont = scaleInfo.blueFont;
+        scaleInfo.yellowFontMetrics = scaleInfo.blueFontMetrics;
+        scaleInfo.faceFont = new Font("Lucidia Sans", Font.BOLD, scaleInfo.scale(12));
+        scaleInfo.faceFontMetrics = pnCalcFace.getFontMetrics(scaleInfo.faceFont);
     }
 
     private float calculateDisplayFont(Font ft, String str, int width) {

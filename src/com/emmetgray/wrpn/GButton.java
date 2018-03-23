@@ -30,52 +30,14 @@ public class GButton extends JButton {
     protected String blueLabel;
     protected int blueX, blueY;
 
-    private static Font blueFont;
-    private static Font whiteFont;
+    protected ScaleInfo scaleInfo;
 
     // Colors taken from the original button image files:
     private final static Color blueColor = new Color(0, 100, 255);
     private final static Color whiteColor = new Color(255,255,255);
-    private static int drawScaleNumerator = 1;
-    private static int drawScaleDenominator = 1;
-    private static int drawScaleNumeratorX = 1;
-    private static int drawScaleDenominatorX = 1;
-    private static int drawScaleNumeratorY= 1;
-    private static int drawScaleDenominatorY = 1;
 
-    public static void setBlueFont(Font font) {
-        blueFont = font;
-    }
-
-    public static void setWhiteFont(Font font) {
-        whiteFont = font;
-    }
-
-    public static void setDrawScale(int numerator, int denominator) {
-        drawScaleNumerator = numerator;
-        drawScaleDenominator = denominator;
-    }
-
-    public static void setDrawScaleX(int numerator, int denominator) {
-        drawScaleNumeratorX = numerator;
-        drawScaleDenominatorX = denominator;
-    }
-
-    public static void setDrawScaleY(int numerator, int denominator) {
-        drawScaleNumeratorY = numerator;
-        drawScaleDenominatorY = denominator;
-    }
-
-    public static int scale(int num) {
-        return num * drawScaleNumerator / drawScaleDenominator;
-    }
-
-    public static int scaleX(int num) {
-        return num * drawScaleNumeratorX / drawScaleDenominatorX;
-    }
-
-    public static int scaleY(int num) {
-        return num * drawScaleNumeratorY / drawScaleDenominatorY;
+    public void setScaleInfo(ScaleInfo info) {
+        scaleInfo = info;
     }
 
     public int getOriginalX() {
@@ -110,13 +72,13 @@ public class GButton extends JButton {
         blueLabel = str;
     }
 
-    public void alignText(FontMetrics buttonWhiteMetrics, FontMetrics buttonBlueMetrics) {
+    public void alignText() {
         int w = getWidth();
         int h = getHeight();
-        whiteX = (w - buttonWhiteMetrics.stringWidth(whiteLabel)) / 2;
-        whiteY = scaleY(20);
-        blueX = (w - buttonBlueMetrics.stringWidth(blueLabel)) / 2;
-        blueY = h - scaleY(3);
+        whiteX = (w - scaleInfo.whiteFontMetrics.stringWidth(whiteLabel)) / 2;
+        whiteY = scaleInfo.scaleY(20);
+        blueX = (w - scaleInfo.blueFontMetrics.stringWidth(blueLabel)) / 2;
+        blueY = h - scaleInfo.scaleY(3);
     }
 
     @Override
@@ -129,19 +91,19 @@ public class GButton extends JButton {
         int x;
         int y;
         int nextY;
-        int oneX = scaleX(1);
-        int oneY = scaleY(1);
+        int oneX = scaleInfo.scaleX(1);
+        int oneY = scaleInfo.scaleY(1);
         int offsetX = pressed ? oneX : 0;
         int offsetY = pressed ? oneY : 0;
 
         super.paint(g);
 
         g.setColor(blueColor);
-        g.setFont(blueFont);
+        g.setFont(scaleInfo.blueFont);
         drawBlueLabel(g, offsetX, offsetY);
 
         g.setColor(whiteColor);
-        g.setFont(whiteFont);
+        g.setFont(scaleInfo.whiteFont);
         drawWhiteLabel(g, offsetX, offsetY);
     }
 
@@ -160,8 +122,8 @@ public class GButton extends JButton {
         private int[] whiteX;
 
         @Override
-        public void alignText(FontMetrics buttonWhiteMetrics, FontMetrics buttonBlueMetrics) {
-            super.alignText(buttonWhiteMetrics, buttonBlueMetrics);
+        public void alignText() {
+            super.alignText();
             if (letters == null) {
                 letters = new String[whiteLabel.length()];
                 for (int i = 0; i < whiteLabel.length(); i++) {
@@ -171,9 +133,9 @@ public class GButton extends JButton {
             }
             int w = getWidth();
             for (int i = 0; i < letters.length; i++) {
-                whiteX[i] = (w - buttonWhiteMetrics.stringWidth(letters[i])) / 2;
+                whiteX[i] = (w - scaleInfo.whiteFontMetrics.stringWidth(letters[i])) / 2;
             }
-            whiteHeight = buttonWhiteMetrics.getAscent();
+            whiteHeight = scaleInfo.whiteFontMetrics.getAscent();
         }
 
         @Override
@@ -193,9 +155,9 @@ public class GButton extends JButton {
         private int descent;
 
         @Override
-        public void alignText(FontMetrics buttonWhiteMetrics, FontMetrics buttonBlueMetrics) {
-            super.alignText(buttonWhiteMetrics, buttonBlueMetrics);
-            descent = buttonWhiteMetrics.getDescent();
+        public void alignText() {
+            super.alignText();
+            descent = scaleInfo.whiteFontMetrics.getDescent();
         }
 
         @Override
@@ -211,10 +173,10 @@ public class GButton extends JButton {
         int sqrtWidth;
         int blueHeight;
         @Override
-        public void alignText(FontMetrics buttonWhiteMetrics, FontMetrics buttonBlueMetrics) {
-            super.alignText(buttonWhiteMetrics, buttonBlueMetrics);
-            sqrtWidth = buttonBlueMetrics.stringWidth("\u221A");  // √
-            blueHeight = buttonBlueMetrics.getAscent();
+        public void alignText() {
+            super.alignText();
+            sqrtWidth = scaleInfo.blueFontMetrics.stringWidth("\u221A");  // √
+            blueHeight = scaleInfo.blueFontMetrics.getAscent();
         }
 
         @Override
