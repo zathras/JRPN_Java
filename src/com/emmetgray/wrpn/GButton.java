@@ -163,7 +163,7 @@ public class GButton extends JButton {
         @Override
         protected void drawWhiteLabel(Graphics2D g, int offsetX, int offsetY) {
             g.setColor(Color.BLACK);
-            g.drawString(whiteLabel, whiteX + offsetX - descent, whiteY + offsetY);
+            g.drawString(whiteLabel, whiteX + offsetX, whiteY + offsetY);
         }
     }
 

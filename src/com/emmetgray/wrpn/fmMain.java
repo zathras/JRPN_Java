@@ -708,7 +708,7 @@ public class fmMain extends javax.swing.JFrame {
 
         bnFKey.setIcon(yellowButtonIcons.buttonIcon);
         bnFKey.setPressedIcon(yellowButtonIcons.buttonPressedIcon);
-        bnFKey.setWhiteLabel(" f");
+        bnFKey.setWhiteLabel("f");
         bnFKey.setBlueLabel("");
         bnFKey.setKeyCode(66);
         bnFKey.setName("");
@@ -720,7 +720,7 @@ public class fmMain extends javax.swing.JFrame {
 
         bnGKey.setIcon(blueButtonIcons.buttonIcon);
         bnGKey.setPressedIcon(blueButtonIcons.buttonPressedIcon);
-        bnGKey.setWhiteLabel(" g");
+        bnGKey.setWhiteLabel("g");
         bnGKey.setBlueLabel("");
         bnGKey.setKeyCode(67);
         bnGKey.setName("");
