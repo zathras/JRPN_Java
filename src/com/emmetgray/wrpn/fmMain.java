@@ -1382,7 +1382,7 @@ public class fmMain extends javax.swing.JFrame {
 
     private float calculateDisplayFont(Font ft, String str, int width) {
         int small = 1;
-        int large = 220 * 4;
+        int large = scaleInfo.scale(55) * 4;
 
         while (large - small > 1) {
             int mid = (large + small) / 2;
