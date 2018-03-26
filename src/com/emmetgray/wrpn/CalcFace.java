@@ -99,7 +99,10 @@ public class CalcFace extends JLabel {
     }
 
 
-    private static Color yellowTextColor = Color.YELLOW;   // that's what was in the original PNG
+    // Colors taken to match the F key.  This is a less intense
+    // yellow than Emmet's original, but I think it's more readable.
+    // Originally it was Color.YELLOW
+    private static Color yellowTextColor = new Color(255, 231, 66);
     private static Color greyFaceColor = new Color(231, 231, 231);
     private static Color bgFaceColor = new Color(66, 66, 66);
 

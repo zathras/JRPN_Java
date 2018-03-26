@@ -32,8 +32,11 @@ public class GButton extends JButton {
 
     protected ScaleInfo scaleInfo;
 
-    // Colors taken from the original button image files:
-    private final static Color blueColor = new Color(0, 100, 255);
+    // Colors taken to match the G key.  This is a lighter
+    // blue than Emmet's original, but I think it's more readable.
+    // Originally it was 0,100,255
+    private final static Color blueColor = new Color(0, 156, 255);
+
     private final static Color whiteColor = new Color(255,255,255);
 
     public void setScaleInfo(ScaleInfo info) {
