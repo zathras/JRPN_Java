@@ -1,0 +1,92 @@
+﻿/*
+ * Page Layout
+ */
+html {
+    /* put a scroll bar up for consistent widths */
+    overflow-y: scroll;
+}
+
+body {
+    /* this is a fixed-width web page that is centered in the browser */
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#Wrapper {
+    background-image: url('Images/Background.gif');
+    background-repeat: repeat-y;
+}
+
+#Header {
+    height: 140px;
+    background-image: url('Images/Banner.gif');
+}
+
+#Navigation {
+    float: left;
+    width: 150px;
+}
+
+#MainBody {
+    float: left;
+    width: 645px;
+    padding-left: 5px;
+}
+
+#Footer {
+    clear: left;
+    padding-left: 155px;
+    height: 35px;
+    /* smaller, italics, vertically centered */
+    font-size: smaller;
+    font-style: italic;
+    line-height: 35px;
+}
+
+
+/*
+ * Text related positioning
+ */
+#Header h1 {
+    /* center the text vertically and horiztonally */
+    text-align: center;
+    line-height: 140px;
+}
+
+/* 
+ * The navigation bar
+ */
+#Navigation ul {
+    /* remove the list syle and spacing between items */
+    list-style: none;
+    padding: 0;
+    margin: 0px;
+}
+
+#Navigation a {
+    /* convert to a block, set the graphics */
+    display: block;
+    width: 150px;
+    height: 30px;
+    background: url('Images/Button.gif') no-repeat 0 0;
+    /* normal text please */
+    text-decoration: none;
+    color: inherit;
+    font-weight: normal;
+    /* make the text fit inside the button */
+    text-align: center;
+    line-height: 30px;
+}
+
+    #Navigation a:hover {
+        /* change to the hover image */
+        background: url('Images/ButtonH.gif') no-repeat 0 0;
+        font-weight: bold;
+    }
+
+    #Navigation a:active {
+        /* change to the active image */
+        background: url('Images/ButtonA.gif') no-repeat 0 0;
+        font-weight: bold;
+    }

@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>WRPN - Users Guide</title>
+    <link href="WRPN%20-%20Users%20Guide_files/Layout.css" rel="stylesheet" type="text/css">
+    <link href="http://www.wrpn.emmet-gray.com/favicon.ico" rel="icon" type="image/x-icon">
+    <style type="text/css">
+        .StandardTable {
+            background-color: white;
+            border: 1px solid black;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+            .StandardTable th {
+                background-color: lightgray;
+                border: 1px solid black;
+            }
+
+            .StandardTable td {
+                border: 1px solid black;
+            }
+
+        .CenterImage {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .Column15 {
+            width: 15%;
+            text-align: center;
+        }
+
+        .Column25 {
+            width: 25%;
+            text-align: center;
+        }
+
+        .Column50 {
+            width: 50%;
+            text-align: center;
+        }
+
+        .Column70 {
+            width: 70%;
+        }
+    </style>
+</head>
+<body>
+    <div id="Wrapper">
+        <div id="Header">
+            <h1>Users Guide</h1>
+        </div>
+        <div id="Navigation">
+            <ul>
+                <li><a href="http://www.wrpn.emmet-gray.com/index.html">Home</a></li>
+                <li><a href="http://www.wrpn.emmet-gray.com/Downloads.html">Downloads</a></li>
+                <li><a href="http://www.wrpn.emmet-gray.com/UsersGuide.html">Users Guide</a></li>
+                <li><a href="http://www.wrpn.emmet-gray.com/FAQ.html">FAQs</a></li>
+                <li><a href="http://www.wrpn.emmet-gray.com/ReleaseNotes.html">Release Notes</a></li>
+                <li><a href="http://www.wrpn.emmet-gray.com/Archives.html">Archives</a></li>
+                <li><a href="http://www.wrpn.emmet-gray.com/AboutMe.html">About Me</a></li>
+            </ul>
+        </div>
+        <div id="MainBody">
+            <h2 style="margin-top: 0">Introduction</h2>
+
+            <p>
+                WRPN is a calculator for Microsoft Windows that is modeled after the Hewlett-Packard
+                HP-16c. This is not a Hewlett-Packard product.
+            </p>
+
+            <p>
+                <img class="CenterImage" src="WRPN%20-%20Users%20Guide_files/wrpn.gif" alt="Calculator face">
+            </p>
+
+            <p>
+                WRPN uses Reverse Polish Notation, which uses the ENTER key instead of the "="
+                (equals) key.
+            </p>
+
+            <p>
+                In addition to all the functions you'd expect from an ordinary calculator, WRPN
+                also has many features specifically designed for the computer professional:
+            </p>
+
+            <ul>
+                <li>Floating point, Decimal, Hexadecimal, Octal, and Binary modes</li>
+                <li>Word sizes from 1-64 bits per word</li>
+                <li>Signed math (1's complement, 2's complement, unsigned)</li>
+                <li>Logical operators (and, or, xor, not, masks, etc.)</li>
+                <li>Bit-wise operators (shift, rotate, rotate with carry, etc.)</li>
+                <li>32 storage registers</li>
+                <li>4 position stack</li>
+                <li>203 lines of program memory</li>
+            </ul>
+
+            <p>The right-most position in the display indicates the current operating mode:</p>
+
+            <blockquote>
+                <table>
+                    <tbody><tr>
+                        <td style="width: 96px">(blank)</td>
+                        <td style="width: 142px">Floating Point</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 96px">h</td>
+                        <td style="width: 142px">Hexadecimal</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 96px">o</td>
+                        <td style="width: 142px">Octal</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 96px">d</td>
+                        <td style="width: 142px">Decimal</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 96px">b</td>
+                        <td style="width: 142px">Binary</td>
+                    </tr>
+                </tbody></table>
+            </blockquote>
+
+            <h2>WRPN Architecture</h2>
+
+            <p>
+                WRPN uses up to 64 bits as the internal representation for integer numbers. When
+                dealing with floating point numbers, the numbers are stored in a typical 8 byte
+                (64 bit) IEEE floating point format. The precision of floating point numbers
+                is fixed, but integers can range from 1 to 64 bits in length
+            </p>
+
+            <p>
+                WRPN has 6 internal registers, 4 of which are arranged in a Last In First Out (LIFO)
+                stack. They are:
+            </p>
+
+            <ul>
+                <li>stack 3 (the T register)</li>
+                <li>stack 2 (the Z register)</li>
+                <li>stack 1 (the Y register)</li>
+                <li>stack 0 (the X register)</li>
+                <li>Last X</li>
+                <li>Index</li>
+            </ul>
+
+            <p>
+                Values pushed "off the top" of the stack (beyond stack 3) are lost. However,
+                the value at the top of the stack is preserved when values are "popped".
+            </p>
+
+            <p>
+                The bottom of stack (the X register) is the value which is always shown in the display.
+            </p>
+
+            <p>
+                The Last X variable contains the previous value of the X register after a math operation.
+            </p>
+
+            <p>There are 6 flags:</p>
+
+            <ul>
+                <li>flag 0 User defined</li>
+                <li>flag 1 User defined</li>
+                <li>flag 2 User defined</li>
+                <li>flag 3 When cleared, trim leading zeros from display</li>
+                <li>flag 4 The "carry" bit</li>
+                <li>flag 5 Overflow condition</li>
+            </ul>
+
+            <h2>Reverse Polish Notation</h2>
+
+            <p>
+                Reverse Polish Notation is a mathematical notation which more closely models the
+                way you solve algebraic equations. It uses "Enter" to separate numbers
+                and mathematical operators appear at the end. WRPN uses a stack to store intermediate
+                values which eliminates the need for parentheses to group intermediate calculations.
+            </p>
+
+            <p>For example, to add 2 plus 3:</p>
+            <blockquote>
+                <table class="StandardTable">
+                    <tbody><tr>
+                        <th class="Column50">Tradition notation</th>
+                        <th class="Column50">Reverse Polish Notation</th>
+                    </tr>
+                    <tr>
+                        <td class="Column50">2</td>
+                        <td class="Column50">2</td>
+                    </tr>
+                    <tr>
+                        <td class="Column50">+</td>
+                        <td class="Column50">Enter</td>
+                    </tr>
+                    <tr>
+                        <td class="Column50">3</td>
+                        <td class="Column50">3</td>
+                    </tr>
+                    <tr>
+                        <td class="Column50">=</td>
+                        <td class="Column50">+</td>
+                    </tr>
+                </tbody></table>
+            </blockquote>
+
+            <p>
+                Notice that the two numbers are separated by the Enter button and that the operator
+                (the "+" button) comes at the end.
+            </p>
+
+            <p>
+                The elegance of this notation becomes more apparent in the following example (2
+                + 3) x 4:
+            </p>
+
+            <blockquote>
+
+                <table class="StandardTable">
+                    <tbody><tr>
+                        <th class="Column25">You type</th>
+                        <th class="Column25">Shown in display</th>
+                        <th class="Column25">X register</th>
+                        <th class="Column25">Y register</th>
+                    </tr>
+                    <tr>
+                        <td class="Column25">2</td>
+                        <td class="Column25">2</td>
+                        <td class="Column25">2</td>
+                        <td class="Column25">0</td>
+                    </tr>
+                    <tr>
+                        <td class="Column25">Enter</td>
+                        <td class="Column25">2.0000</td>
+                        <td class="Column25">2</td>
+                        <td class="Column25">2</td>
+                    </tr>
+                    <tr>
+                        <td class="Column25">3</td>
+                        <td class="Column25">3</td>
+                        <td class="Column25">3</td>
+                        <td class="Column25">2</td>
+                    </tr>
+                    <tr>
+                        <td class="Column25">+</td>
+                        <td class="Column25">5.0000</td>
+                        <td class="Column25">5</td>
+                        <td class="Column25">0</td>
+                    </tr>
+                    <tr>
+                        <td class="Column25">4</td>
+                        <td class="Column25">4</td>
+                        <td class="Column25">4</td>
+                        <td class="Column25">5</td>
+                    </tr>
+                    <tr>
+                        <td class="Column25">x</td>
+                        <td class="Column25">20.0000</td>
+                        <td class="Column25">20</td>
+                        <td class="Column25">0</td>
+                    </tr>
+                </tbody></table>
+
+            </blockquote>
+
+            <h2>Key Sequences</h2>
+
+            <p>Almost every button in WRPN has three functions:</p>
+
+            <ul>
+                <li>normal (unshifted) function</li>
+                <li>"yellow" function</li>
+                <li>"blue" function</li>
+            </ul>
+
+            <p>
+                To select a "yellow" function, first use the mouse to click on the yellow
+                <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key">
+                "f" button, then click on the desired button.
+            </p>
+
+            <p>
+                To select a "blue" function, click on the blue
+                <img src="WRPN%20-%20Users%20Guide_files/gkey.gif" alt="g Key">
+                "g" button, then click on the desired button. 
+            </p>
+
+            <p>
+                The following buttons require an "argument". Which means that after you
+                click on the button, you must also click some "digit" button (which becomes
+                the "argument" to the function).
+            </p>
+
+            <ul>
+                <li>STO</li>
+                <li>RCL</li>
+                <li>FLOAT</li>
+                <li>SF</li>
+                <li>CF</li>
+                <li>F?</li>
+                <li>WINDOW</li>
+            </ul>
+
+            <p>
+                For example, to recall a value from register 5, you would use the following sequence:
+            </p>
+
+            <blockquote>
+                <p>
+                    RCL<br>
+                    5
+                </p>
+            </blockquote>
+
+            <p>
+                The "5" never appears on the screen, because it is the argument of the
+                RCL operator.
+            </p>
+
+            <p>Certain buttons are also mapped to the keyboard; they are:</p>
+
+            <ul>
+                <li>0-9</li>
+                <li>A-F</li>
+                <li>.</li>
+                <li>+</li>
+                <li>-</li>
+                <li>×</li>
+                <li>÷</li>
+                <li>BSP</li>
+            </ul>
+
+            <p>Note: Use the "*" key for ×, and "/" for ÷</p>
+            <p>
+                The Enter button is only required to separate the numbers (and push the value onto
+                the stack)
+            </p>
+
+            <h2>Operating Modes</h2>
+
+            <p>WRPN has 5 operating modes:</p>
+            <ul>
+                <li>Floating point</li>
+                <li>Decimal</li>
+                <li>Hexadecimal</li>
+                <li>Octal</li>
+                <li>Binary</li>
+            </ul>
+
+            <p>
+                <img src="WRPN%20-%20Users%20Guide_files/Modes.gif" alt="Modes" width="182" height="43">
+            </p>
+
+            <p>
+                Click on the HEX, DEC, OCT, or BIN buttons to enter the appropriate integer mode.
+            </p>
+
+            <p>
+                <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="F Key" width="43" height="43"><img src="WRPN%20-%20Users%20Guide_files/RCL.gif" alt="RCL key" width="43" height="43">
+            </p>
+
+            <p>
+                The FLOAT function is a "yellow" function above the RCL button. FLOAT
+                requires an argument which is the decimal precision. For example, to switch to floating
+                point mode with 2 decimal places, enter the following sequence:
+            </p>
+
+            <blockquote>
+                <p>
+                    FLOAT (use f, then RCL)<br>
+                    2
+                </p>
+
+            </blockquote>
+
+            <p>
+                The float mode will switch to scientific notation whenever the display would otherwise
+                loose precision at the specified number of decimal places. To force scientific notation,
+                enter a decimal point as the float digit. To enter a number in scientific
+                notation use the EEX key (FKey + CHS) to enter the exponent.
+            </p>
+
+            <p>
+                Optionally, each of the operating modes can be selected from the window's Menu.
+            </p>
+
+            <p>
+                The internal representation of the numbers do change when switching between the
+                floating point and any one of the integer modes. In some cases, the values may appear
+                to be the same. However, do not rely on this behavior. For example, the fractional
+                parts of floating point number will be truncated upon entering one of the integer
+                modes... and will not be restored upon return to the floating point mode.
+            </p>
+
+            <p>The range of valid input characters is shown below:</p>
+
+            <blockquote>
+                <table>
+                    <tbody><tr>
+                        <td style="width: 82px">Hex  </td>
+                        <td style="width: 215px">[0-9] [a-f]</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 82px">Float</td>
+                        <td style="width: 215px">[0-9] (plus decimal point)</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 82px">Dec</td>
+                        <td style="width: 215px">[0-9]</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 82px">Oct</td>
+                        <td style="width: 215px">[0-7]</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 82px">Bin</td>
+                        <td style="width: 215px">[0-1]</td>
+                    </tr>
+                </tbody></table>
+            </blockquote>
+
+            <h2>Display</h2>
+
+            <p>
+                <img src="WRPN%20-%20Users%20Guide_files/Display.gif" alt="Display">
+            </p>
+
+            <p>
+                While the yellow F key is pressed, the "f" indicator is shown in the bottom
+                portion of the display. When the blue G key is pressed, the "g" indicator
+                is shown.
+            </p>
+
+            <p>
+                The status of the overflow and carry bit indicator are shown as "C" and
+                "G". The program mode is indicated by the "PRGM" indicator.
+            </p>
+
+            <p>Control over displaying leading zeros is determined by flag 3.</p>
+
+            <p>
+                <img src="WRPN%20-%20Users%20Guide_files/B_Dot.gif" alt="Display with binary left">
+            </p>
+
+            <p>
+                <img src="WRPN%20-%20Users%20Guide_files/Dot_B.gif" alt="Display with binary right">
+            </p>
+
+            <p>
+                The numeric display can only contain 32 bits on information while in the 64 bit
+                binary mode. To indicate that more digits are present, the "mode indicator"
+                changes
+                from "b" to ".b" or "b.". The WINDOW key (f + Enter)
+                and the Scroll keys (g + STO
+                and g + RCL)are used to see the other 32 bits.
+            </p>
+
+            <h1>Basic/Input Functions</h1>
+
+            <table class="StandardTable">
+                <tbody><tr>
+                    <th class="Column15">Function</th>
+                    <th class="Column15">Key</th>
+                    <th class="Column70">Description</th>
+                </tr>
+                <tr>
+                    <td class="Column15">ON</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/ON.gif" alt="ON Key"></td>
+                    <td class="Column70">No funtion. Use the normal File/Exit or the close button to exit WRPN.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">f </td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="F Key"></td>
+                    <td class="Column70">Gain access to the "yellow" functions. The f button doesn't
+                        have a function of its own, it is used to change the function of another button
+                        (i.e.: the function written in yellow immediately above the button).</td>
+                </tr>
+                <tr>
+                    <td class="Column15">g</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/gkey.gif" alt="G Key"></td>
+                    <td class="Column70">Gain access to the "blue" functions. It is used to change
+                        the function of a button to the function written in blue immediately below the button.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="Column15">Enter</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/Enter.gif" alt="Enter Key"></td>
+                    <td class="Column70">Used to terminate numeric input and push a value onto the stack.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="Column15">BSP</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/BSP.gif" alt="BSP Key"></td>
+                    <td class="Column70">Backspace. Erases one character of input. Also used to clear error
+                        messages from the screen.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">clear PREFIX</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/BSP.gif" alt="BSP Key">
+                    </td>
+                    <td class="Column70">Clear a pending two-part function. When functions that require
+                        multiple buttons are entered in error, they must be terminated in this way.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">[0-9]  </td>
+                    <td class="Column15">&nbsp;</td>
+                    <td class="Column70">The digits [0-9] are used to input values or as arguments to other
+                        functions. Obviously, the OCT and BIN modes do not allow digits beyond 7 and 1 respectively.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="Column15">decimal</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/dp.gif" alt="dp Key"></td>
+                    <td class="Column70">The decimal point button is only used in the Float mode.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">[A-F]</td>
+                    <td class="Column15">&nbsp;</td>
+                    <td class="Column70">The letters [A-F] are used as digits in the HEX mode.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">EEX  </td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/CHS.gif" alt="CHS Key">
+                    </td>
+                    <td class="Column70">Enter Exponent. This button is used for entering scientific notation
+                        (float mode only).</td>
+                </tr>
+                <tr>
+                    <td class="Column15">CHS</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/CHS.gif" alt="CHS Key"></td>
+                    <td class="Column70">Change sign. Used to toggle between a negative and positive value.
+                        If pressed after EEX, it toggles the sign of the exponent.</td>
+                </tr>
+            </tbody></table>
+            <h2>Options</h2>
+
+            <table class="StandardTable">
+                <tbody><tr>
+                    <th class="Column15">Function</th>
+                    <th class="Column15">Key</th>
+                    <th class="Column70">Description</th>
+                </tr>
+                <tr>
+                    <td class="Column15">HEX</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/HEX.gif" alt="HEX Key"></td>
+                    <td class="Column70">Hexadecimal mode. All values are displayed as hexadecimal (base
+                        16) numbers. The HEX mode does not support fractional values.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">DEC</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/DEC.gif" alt="DEC Key"></td>
+                    <td class="Column70">Decimal mode. All values are displayed as decimal (base 10) numbers.
+                        The DEC mode does not support fractional values. The method of representing negative
+                        numbers is discussed below.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">OCT</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/OCT.gif" alt="OCT Key"></td>
+                    <td class="Column70">Octal mode. All values are displayed as octal (base 8) numbers.
+                        The OCT mode does not support fractional values.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">BIN</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/BIN.gif" alt="BIN Key"></td>
+                    <td class="Column70">Binary mode. All values are displayed as binary (base 2) numbers.
+                        The BIN mode does not support fractional values.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">FLOAT</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/RCL.gif" alt="RCL Key">
+                    </td>
+                    <td class="Column70">Floating point mode. All values are displayed as floating point
+                        numbers at the requested number of decimal places. The is a "two part"
+                        function that requires a single digit [0-9] as an argument. The argument is the
+                        number of decimal places to be shown in the display. The display will automatically
+                        change to scientific notation if the requested decimal places would otherwise obscure
+                        the precision.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">WSIZE</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/STO.gif" alt="STO Key">
+                    </td>
+                    <td class="Column70">Word size. Changes the internal word size (bits per word). WSIZE
+                        takes the value of the X register as the argument.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">set 1's</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/1.gif" alt="1 Key">
+                    </td>
+                    <td class="Column70">Set 1's complement. Change the representation of negative numbers
+                        to 1's complement.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">set 2's</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/2.gif" alt="2 Key">
+                    </td>
+                    <td class="Column70">Set 2's complement. Change the representation of negative numbers
+                        to 2's complement. This is the normal representation.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">set UNSGN</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/3.gif" alt="3 Key">
+                    </td>
+                    <td class="Column70">Set to unsigned complement. Change the representation of "negative"
+                        numbers to unsigned.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">show HEX</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/HEX.gif" alt="HEX Key">
+                    </td>
+                    <td class="Column70">Show the value in the X register as a hexadecimal number, but remain
+                        in the current mode.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">show DEC</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/DEC.gif" alt="DEC Key">
+                    </td>
+                    <td class="Column70">Show the value in the X register as a decimal number, but remain
+                        in the current mode.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">show OCT</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/OCT.gif" alt="OCT Key">
+                    </td>
+                    <td class="Column70">Show the value in the X register as a octal number, but remain
+                        in the current mode.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">show BIN</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/BIN.gif" alt="BIN Key">
+                    </td>
+                    <td class="Column70">Show the value in the X register as a binary number, but remain
+                        in the current mode.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">STATUS</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/dp.gif" alt="dp Key">
+                    </td>
+                    <td class="Column70">Display the current status of the word size, complement mode, and
+                        user flags.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">&lt;  </td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/gkey.gif" alt="g Key"><img src="WRPN%20-%20Users%20Guide_files/STO.gif" alt="STO Key">
+                    </td>
+                    <td class="Column70">Move the display "window" 1 bit to the left. In the binary
+                        mode,
+                        the presence of additional digits to the left is indicated by the ".b"
+                        mode indicator.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="Column15">&gt;</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/gkey.gif" alt="g Key"><img src="WRPN%20-%20Users%20Guide_files/RCL.gif" alt="RCL Key">
+                    </td>
+                    <td class="Column70">Move the display "window" 1 bit to the right. . In the
+                        binary mode,
+                        the presence of additional digits to the right is indicated by the "b."
+                        mode indicator.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="Column15">SF</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/gkey.gif" alt="g Key"><img src="WRPN%20-%20Users%20Guide_files/4.gif" alt="4 Key">
+                    </td>
+                    <td class="Column70">Set Flag. Set the flag specified in the X register to 1.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">CF</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/gkey.gif" alt="g Key"><img src="WRPN%20-%20Users%20Guide_files/5.gif" alt="5 Key">
+                    </td>
+                    <td class="Column70">Clear Flag. Set the flag specified in the X register to 0.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">WINDOW</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/Enter.gif" alt="Enter Key">
+                    </td>
+                    <td class="Column70">Move the display 32 bits in the binary mode. Window 0 is
+                        the right-most (normal) windows, and Window 1 is the left-most.</td>
+                </tr>
+            </tbody></table>
+
+            <h2>Math Functions</h2>
+
+            <table class="StandardTable">
+                <tbody><tr>
+                    <th class="Column15">Function</th>
+                    <th class="Column15">Key</th>
+                    <th class="Column70">Description</th>
+                </tr>
+                <tr>
+                    <td class="Column15">+</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/Plus.gif" alt="Plus Key"></td>
+                    <td class="Column70">Addition. Add the value of the X register to the value of Y register
+                        and return the answer in the X register. Contents of the Y register are lost.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="Column15">-</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/Minus.gif" alt="Minus Key"></td>
+                    <td class="Column70">Subtraction. Subtract the value of the X register from the value
+                        of Y register and return the answer in the X register. Contents of the Y register
+                        are lost.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">×</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/Mult.gif" alt="Mult Key"></td>
+                    <td class="Column70">Multiplication. Multiply the value of the X register to the value
+                        of Y register and return the answer in the X register. Contents of the Y register
+                        are lost.  </td>
+                </tr>
+                <tr>
+                    <td class="Column15">÷</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/Div.gif" alt="Div Key"></td>
+                    <td class="Column70">Division. Divide the value of the X register into the value of
+                        Y register and return the answer in the X register. Contents of the Y register are
+                        lost.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">Sqrt</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/gkey.gif" alt="g Key"><img src="WRPN%20-%20Users%20Guide_files/OCT.gif" alt="OCT Key">
+                    </td>
+                    <td class="Column70">Square root. Performs the square root of the value of the X register
+                        and returns the answer to the X register.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">1/x  </td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/gkey.gif" alt="g Key"><img src="WRPN%20-%20Users%20Guide_files/BIN.gif" alt="BIN Key">
+                    </td>
+                    <td class="Column70">Inverse. Performs the inverse of the value of the X register and
+                        returns the answer to the X register. (Not available in the integer modes)</td>
+                </tr>
+                <tr>
+                    <td class="Column15">ABS  </td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/gkey.gif" alt="g Key"><img src="WRPN%20-%20Users%20Guide_files/8.gif" alt="8 Key">
+                    </td>
+                    <td class="Column70">Absolute value. Performs the absolute value of the value of the
+                        X register and returns the answer to the X register.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">RMD</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/9.gif" alt="9 Key">
+                    </td>
+                    <td class="Column70">Remainder (modulus). Performs a modulus on the contents of the
+                        X and Y registers. The answer is returned to the X register. The contents of the
+                        Y register are lost.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">DBL×</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/gkey.gif" alt="g Key"><img src="WRPN%20-%20Users%20Guide_files/Mult.gif" alt="Mult Key">
+                    </td>
+                    <td class="Column70">Double precision multiplication. Multiply the value of the X register
+                        to the value of the Y register and returns the answer split between the X and Y
+                        registers. The X register contains the right-most bits (as defined by word size),
+                        the Y register contains the left-most bits.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">DBL÷</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/gkey.gif" alt="g Key"><img src="WRPN%20-%20Users%20Guide_files/Div.gif" alt="Div Key">
+                    </td>
+                    <td class="Column70">Double precision division. Divide the value split between the Y
+                        and Z registers into the value of the X register and return the answer in the X
+                        register. The Y register contains the left-most bits (as defined by word size),
+                        the X register contains the right-most bits.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">DBLR</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/gkey.gif" alt="g Key"><img src="WRPN%20-%20Users%20Guide_files/9.gif" alt="9 Key">
+                    </td>
+                    <td class="Column70">Double precision remainder (modulus). Performs the modulus of the
+                        value split between the X and Z registers into the value of the X register and return
+                        the answer in the X register. The Y register contains the left-most bits (as defined
+                        by word size), the X register contains the right-most bits.</td>
+                </tr>
+            </tbody></table>
+
+            <h2>Stack/Register Functions</h2>
+
+            <table class="StandardTable">
+                <tbody><tr>
+                    <th class="Column15">Function</th>
+                    <th class="Column15">Key</th>
+                    <th class="Column70">Description</th>
+                </tr>
+                <tr>
+                    <td class="Column15">Rol</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/ROL.gif" alt="ROL Key"></td>
+                    <td class="Column70">Roll the stack down. The contents of the stack are rolled from
+                        top to bottom (and wrap around to the top).</td>
+                </tr>
+                <tr>
+                    <td class="Column15">Rol up</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/gkey.gif" alt="g Key"><img src="WRPN%20-%20Users%20Guide_files/ROL.gif" alt="ROL Key">
+                    </td>
+                    <td class="Column70">Roll the stack up. The contents of the stack are rolled from bottom
+                        to top (and wrap around to the bottom).</td>
+                </tr>
+                <tr>
+                    <td class="Column15">X:Y</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/XY.gif" alt="XY Key"></td>
+                    <td class="Column70">Exchange X and Y. Exchange the values of the X and Y registers.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="Column15">CLx</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/gkey.gif" alt="g Key"><img src="WRPN%20-%20Users%20Guide_files/BSP.gif" alt="BSP Key">
+                    </td>
+                    <td class="Column70">Clear the X register. The contents of the X register are set to
+                        zero.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">LSTx</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/gkey.gif" alt="g Key"><img src="WRPN%20-%20Users%20Guide_files/Enter.gif" alt="Enter Key">
+                    </td>
+                    <td class="Column70">Last X. The previous contents of the X register are placed into
+                        the X register.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">STO</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/STO.gif" alt="STO Key"></td>
+                    <td class="Column70">Store. Store the value of the X register into a "storage register".
+                        This is a "two part" function which requires a single digit [0-9][A-F]
+                        as an argument or a single digit and the decimal point [.0-.9][.A-.F]. The argument
+                        is the "name" of the register to receive the value.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">RCL</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/RCL.gif" alt="RCL Key"></td>
+                    <td class="Column70">Recall. Recall the value from a "storage register" into
+                        the X register. This is a "two-part" function which requires a single
+                        digit digit [0-9][A-F] as an argument or a single digit and the decimal point [.0-.9][.A-.F].
+                        The argument is the "name" of the register from which to get the value.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="Column15">Clear REG</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/XY.gif" alt="XY Key">
+                    </td>
+                    <td class="Column70">Clear registers. Clears all "storage registers".
+                        All registers are set to values of zero.</td>
+                </tr>
+            </tbody></table>
+
+            <h2>Logical Operators</h2>
+
+            <p>Logical operators only function in one of the integer modes</p>
+
+            <table class="StandardTable">
+                <tbody><tr>
+                    <th class="Column15">Function</th>
+                    <th class="Column15">Key</th>
+                    <th class="Column70">Description</th>
+                </tr>
+                <tr>
+                    <td class="Column15">AND</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/Mult.gif" alt="Mult Key">
+                    </td>
+                    <td class="Column70">Performs a logical "and" on the contents of the X and
+                        Y registers. The answer is returned to the X register. The contents of the Y register
+                        are lost.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">OR</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/Plus.gif" alt="Plus Key">
+                    </td>
+                    <td class="Column70">Performs a logical "or" on the contents of the X and
+                        Y registers. The answer is returned to the X register. The contents of the Y register
+                        are lost.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">XOR</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/Div.gif" alt="Div Key">
+                    </td>
+                    <td class="Column70">Exclusive or. Performs a logical "exclusive or" on the
+                        contents of the X and Y registers. The answer is returned to the X register.  The
+                        contents of the Y register are lost.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">NOT</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/Minus.gif" alt="Minus Key">
+                    </td>
+                    <td class="Column70">Not (1's complement). Performs a 1's complement on the contents
+                        of the X register. The answer is returned to the X register.</td>
+                </tr>
+            </tbody></table>
+
+            <h2>Bit-wise Operators</h2>
+
+            <p>Bit operators only function in one of the integer modes.</p>
+
+            <table class="StandardTable">
+                <tbody><tr>
+                    <th class="Column15">Function</th>
+                    <th class="Column15">Key</th>
+                    <th class="Column70">Description</th>
+                </tr>
+                <tr>
+                    <td class="Column15">SL</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/A.gif" alt="A Key">
+                    </td>
+                    <td class="Column70">Shift Left. Shift the bit pattern in the X register to the left.
+                        The left-most bit is preserved in the carry bit variable. The new right-most bit
+                        is replaced with a zero.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">SR</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/B.gif" alt="B Key">
+                    </td>
+                    <td class="Column70">Shift Right. Shift the bit pattern in the X register to the right.
+                        The right-most bit is preserved in the carry bit variable. The new left-most bit
+                        is replaced with a zero.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">ASR</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/gkey.gif" alt="g Key"><img src="WRPN%20-%20Users%20Guide_files/B.gif" alt="B Key">
+                    </td>
+                    <td class="Column70">Arithmetic Shift Right. Shift the bit pattern in the X register
+                        to the right but preserve the left-most (sign) bit. The right-most bit is preserved
+                        in the carry bit variable.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">RR</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/D.gif" alt="D Key">
+                    </td>
+                    <td class="Column70">Rotate Right. Rotate the bit pattern in the X register to the right.
+                        The right-most bit is copied to the new left-most position and preserved in the
+                        carry bit variable.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">RRn</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/F.gif" alt="F Key">
+                    </td>
+                    <td class="Column70">Rotate Right "n" times. Rotate the bit pattern in the
+                        Y register to the right the number of times indicated by the value of the X register.
+                        The right-most bits are copied to new left-most positions. The carry bit contains
+                        the last right-most bit rotated.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">RRC</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/gkey.gif" alt="g Key"><img src="WRPN%20-%20Users%20Guide_files/D.gif" alt="D Key">
+                    </td>
+                    <td class="Column70">Rotate Right with Carry. Rotate the bit pattern in the X register
+                        to the right and include the carry bit (between the left-most and right-most positions).
+                        The right-most position is preserved in the carry bit variable.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">RRCn  </td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/gkey.gif" alt="g Key"><img src="WRPN%20-%20Users%20Guide_files/F.gif" alt="F Key">
+                    </td>
+                    <td class="Column70">Rotate Right with Carry "n" times. Rotate the bit pattern
+                        in the Y register to the right (including the carry bit) the number of times indicated
+                        by the value of the X register. The carry bit contains the last right-most bit rotated.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="Column15">RL</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/C.gif" alt="C Key">
+                    </td>
+                    <td class="Column70">Rotate Left. Rotate the bit pattern in the X register to the left.
+                        The left-most bit is copied to the new right-most position and preserved in the
+                        carry bit variable.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">RLn</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/E.gif" alt="E Key">
+                    </td>
+                    <td class="Column70">Rotate Left "n" times. Rotate the bit pattern in the
+                        Y register to the left the number of times indicated by the value of the X register.
+                        The left-most bits are copied to new right-most positions. The carry bit contains
+                        the last right-most bit rotated.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">RLC</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/gkey.gif" alt="g Key"><img src="WRPN%20-%20Users%20Guide_files/D.gif" alt="D Key">
+                    </td>
+                    <td class="Column70">Rotate Left with Carry. Rotate the bit pattern in the X register
+                        to the left and include the carry bit (between the left-most and right-most positions).
+                        The left-most position is preserved in the carry bit variable.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">RLCn  </td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/gkey.gif" alt="g Key"><img src="WRPN%20-%20Users%20Guide_files/E.gif" alt="E Key">
+                    </td>
+                    <td class="Column70">Rotate Left with Carry "n" times. Rotate the bit pattern
+                        in the Y register to the left (including the carry bit) the number of times indicated
+                        by the value of the X register. The carry bit contains the last left-most bit rotated.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="Column15">MASKR</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/8.gif" alt="8 Key">
+                    </td>
+                    <td class="Column70">Mask Right. Create a right justified bit-wise mask. The number
+                        of bits in the mask is the value of the X register.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">MASKL</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/7.gif" alt="7 Key">
+                    </td>
+                    <td class="Column70">Mask Left. Create a left justified bit-wise mask. The number of
+                        bits in the mask is the value of the X register.  </td>
+                </tr>
+                <tr>
+                    <td class="Column15">LJ</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/gkey.gif" alt="g Key"><img src="WRPN%20-%20Users%20Guide_files/A.gif" alt="A Key">
+                    </td>
+                    <td class="Column70">Left Justify. Move the bit pattern to the left most position
+                        within the current word size. Afterwards, the number of positions shifted
+                        is put in the X register and the resulting shifted pattern is put in the Y register.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="Column15">SB</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/4.gif" alt="4 Key">
+                    </td>
+                    <td class="Column70">Set Bit. Set a bit to 1 in the value of the Y register. The number
+                        of the bit to set is the value of the the X register. The answer is returned in
+                        the X register.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">CB</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/fkey.gif" alt="f Key"><img src="WRPN%20-%20Users%20Guide_files/5.gif" alt="5 Key">
+                    </td>
+                    <td class="Column70">Clear Bit. Clear a bit (set to 0) in the value of the Y register.
+                        The number of the bit to clear is the value of the X register. The answer is returned
+                        in the X register.</td>
+                </tr>
+                <tr>
+                    <td class="Column15">#B</td>
+                    <td class="Column15">
+                        <img src="WRPN%20-%20Users%20Guide_files/gkey.gif" alt="g Key"><img src="WRPN%20-%20Users%20Guide_files/7.gif" alt="7 Key">
+                    </td>
+                    <td class="Column70">Sum Bits. Perform a summation of the number of set (value of 1)
+                        bits in the value of the X register. Returns the answer in the X register.</td>
+                </tr>
+            </tbody></table>
+            <h2>Programming</h2>
+
+            <p>
+                The writing and editing of a program within the calculator is performed similar
+                to recording a series of keystrokes.  This recording process is started and stopped
+                with the P/R key, which switches the display to show the program line number, followed
+                by codes for the recorded keys. You can navigate through the program listing via the
+                SST, BST, and GTO keys.
+            </p>
+            <p>
+                Recorded program lines are (optionally) saved upon exit or can be explicitly saved
+                to a file. Loading a saved file will not only retrieve the program lines, it will
+                also retrieve all other calculator settings. Programs lines can be printed
+                via the File/Print Program menu item.
+            </p>
+            <p>
+                Running an program within the calculator is preformed by the GSB key followed by
+                a label (0-9, A-F). A crude form of debugging is available via the SST key which
+                allows for the application to be executed one line at a time. Program execution
+                can be paused or stopped via the PSE and R/S keys.
+            </p>
+            <p>
+                <em>Note: It is beyond the scope of this document to provide sufficient information
+                    on how to write a program for WRPN.</em>
+            </p>
+
+            <table class="StandardTable">
+                <tbody><tr>
+                    <th class="Column15">Function</th>
+                    <th class="Column15">Key</th>
+                    <th class="Column70">Description</th>
+                </tr>
+                <tr>
+                    <td class="Column15">GSB</td>
+                    <td class="Column15">
+                        <img alt="GSB Key" src="WRPN%20-%20Users%20Guide_files/GSB.gif" width="38" height="43"></td>
+                    <td class="Column70">Go to subroutine (followed by a label key). Used to launch a program
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">GTO</td>
+                    <td class="Column15">
+                        <img alt="GTO Key" src="WRPN%20-%20Users%20Guide_files/GTO.gif" width="38" height="43"></td>
+                    <td class="Column70">Go to label</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">R/S</td>
+                    <td class="Column15">
+                        <img alt="RS Key" src="WRPN%20-%20Users%20Guide_files/RS.gif" width="38" height="43"></td>
+                    <td class="Column70">Run or Stop the program</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">SST  </td>
+                    <td class="Column15">
+                        <img alt="SST Key" src="WRPN%20-%20Users%20Guide_files/SST.gif" width="38" height="43"></td>
+                    <td class="Column70">Single step through a program</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">x:(i)</td>
+                    <td class="Column15">
+                        <img alt="f Key" src="WRPN%20-%20Users%20Guide_files/fkey.gif" width="38" height="43"><img alt="GSB Key" src="WRPN%20-%20Users%20Guide_files/GSB.gif" width="38" height="43"></td>
+                    <td class="Column70">Exchange X with the value of the Index register</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">x:I  </td>
+                    <td class="Column15">
+                        <img alt="f Key" src="WRPN%20-%20Users%20Guide_files/fkey.gif" width="38" height="43"><img alt="GTO Key" src="WRPN%20-%20Users%20Guide_files/GTO.gif" width="38" height="43"></td>
+                    <td class="Column70">Exchange X with Index register</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">(i)</td>
+                    <td class="Column15">
+                        <img alt="f key" src="WRPN%20-%20Users%20Guide_files/fkey.gif" width="38" height="43"><img alt="RS Key" src="WRPN%20-%20Users%20Guide_files/RS.gif" width="38" height="43"></td>
+                    <td class="Column70">The value of the Index register</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">I  </td>
+                    <td class="Column15">
+                        <img alt="f Key" src="WRPN%20-%20Users%20Guide_files/fkey.gif" width="38" height="43"><img alt="SST Key" src="WRPN%20-%20Users%20Guide_files/SST.gif" width="38" height="43"></td>
+                    <td class="Column70">The I (index) register</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">B?</td>
+                    <td class="Column15">
+                        <img alt="f Key" src="WRPN%20-%20Users%20Guide_files/fkey.gif" width="38" height="43"><img alt="6 Key" src="WRPN%20-%20Users%20Guide_files/6.gif" width="38" height="43"></td>
+                    <td class="Column70">Test bit  </td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">RTN</td>
+                    <td class="Column15">
+                        <img alt="g Key" src="WRPN%20-%20Users%20Guide_files/gkey.gif" width="38" height="43"><img alt="GSB Key" src="WRPN%20-%20Users%20Guide_files/GSB.gif" width="38" height="43"></td>
+                    <td class="Column70">Return from subroutine</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">LBL</td>
+                    <td class="Column15">
+                        <img alt="g Key" src="WRPN%20-%20Users%20Guide_files/gkey.gif" width="38" height="43"><img alt="GTO Key" src="WRPN%20-%20Users%20Guide_files/GTO.gif" width="38" height="43"></td>
+                    <td class="Column70">Label (the target of a GTO or GSB)</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">DSZ</td>
+                    <td class="Column15">
+                        <img alt="g Key" src="WRPN%20-%20Users%20Guide_files/gkey.gif" width="38" height="43"><img alt="HEX Key" src="WRPN%20-%20Users%20Guide_files/HEX.gif" width="38" height="43"></td>
+                    <td class="Column70">Decrement and skip on zero</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">ISZ</td>
+                    <td class="Column15">
+                        <img alt="g Key" src="WRPN%20-%20Users%20Guide_files/gkey.gif" width="38" height="43"><img alt="DEC Key" src="WRPN%20-%20Users%20Guide_files/DEC.gif" width="38" height="43"></td>
+                    <td class="Column70">Increment and skip on zero</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">F?</td>
+                    <td class="Column15">
+                        <img alt="g Key" src="WRPN%20-%20Users%20Guide_files/gkey.gif" width="38" height="43"><img alt="6 Key" src="WRPN%20-%20Users%20Guide_files/6.gif" width="38" height="43"></td>
+                    <td class="Column70">Test flag (i.e. the carry bit)</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">P/R</td>
+                    <td class="Column15">
+                        <img alt="g Key" src="WRPN%20-%20Users%20Guide_files/gkey.gif" width="38" height="43"><img alt="RS Key" src="WRPN%20-%20Users%20Guide_files/RS.gif" width="38" height="43"></td>
+                    <td class="Column70">Switch between the Program or Run modes</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">BST</td>
+                    <td class="Column15">
+                        <img alt="g Key" src="WRPN%20-%20Users%20Guide_files/gkey.gif" width="38" height="43"><img alt="SST Key" src="WRPN%20-%20Users%20Guide_files/SST.gif" width="38" height="43"></td>
+                    <td class="Column70">Back step through a program</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">PSE</td>
+                    <td class="Column15">
+                        <img alt="g Key" src="WRPN%20-%20Users%20Guide_files/gkey.gif" width="38" height="43"><img alt="XY Key" src="WRPN%20-%20Users%20Guide_files/XY.gif" width="38" height="43"></td>
+                    <td class="Column70">Pause execution to show a value</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">MEM</td>
+                    <td class="Column15">
+                        <img alt="f Key" src="WRPN%20-%20Users%20Guide_files/fkey.gif" width="38" height="43"><img alt="0 Key" src="WRPN%20-%20Users%20Guide_files/0.gif" width="38" height="43"></td>
+                    <td class="Column70">Remaining memory</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">x&lt;=y</td>
+                    <td class="Column15">
+                        <img alt="g Key" src="WRPN%20-%20Users%20Guide_files/gkey.gif" width="38" height="43"><img alt="1 Key" src="WRPN%20-%20Users%20Guide_files/1.gif" width="38" height="43"></td>
+                    <td class="Column70">If (x &lt;=y ) then...</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">x&lt;0</td>
+                    <td class="Column15">
+                        <img alt="g Key" src="WRPN%20-%20Users%20Guide_files/gkey.gif" width="38" height="43"><img alt="2 Key" src="WRPN%20-%20Users%20Guide_files/2.gif" width="38" height="43"></td>
+                    <td class="Column70">If (x &lt; 0) then...</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">x&gt;y</td>
+                    <td class="Column15">
+                        <img alt="g Key" src="WRPN%20-%20Users%20Guide_files/gkey.gif" width="38" height="43"><img alt="3 Key" src="WRPN%20-%20Users%20Guide_files/3.gif" width="38" height="43"></td>
+                    <td class="Column70">If (x &gt; y) then...</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">x&gt;0</td>
+                    <td class="Column15">
+                        <img alt="g Key" src="WRPN%20-%20Users%20Guide_files/gkey.gif" width="38" height="43"><img alt="Minus Key" src="WRPN%20-%20Users%20Guide_files/Minus.gif" width="38" height="43"></td>
+                    <td class="Column70">If (x&gt; 0) then...</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">x!=y</td>
+                    <td class="Column15">
+                        <img alt="g Key" src="WRPN%20-%20Users%20Guide_files/gkey.gif" width="38" height="43"><img alt="0 Key" src="WRPN%20-%20Users%20Guide_files/0.gif" width="38" height="43"></td>
+                    <td class="Column70">If (x!= y) then...</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">x!=0</td>
+                    <td class="Column15">
+                        <img alt="g Key" src="WRPN%20-%20Users%20Guide_files/gkey.gif" width="38" height="43"><img alt="dp Key" src="WRPN%20-%20Users%20Guide_files/dp.gif" width="38" height="43"></td>
+                    <td class="Column70">If (x != 0) then...</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">x=y</td>
+                    <td class="Column15">
+                        <img alt="g Key" src="WRPN%20-%20Users%20Guide_files/gkey.gif" width="38" height="43"><img alt="CHS Key" src="WRPN%20-%20Users%20Guide_files/CHS.gif" width="38" height="43"></td>
+                    <td class="Column70">If (x= y) then...</td>
+                </tr>
+
+                <tr>
+                    <td class="Column15">x=0  </td>
+                    <td class="Column15">
+                        <img alt="g Key" src="WRPN%20-%20Users%20Guide_files/gkey.gif" width="38" height="43"><img alt="Plus Key" src="WRPN%20-%20Users%20Guide_files/Plus.gif" width="38" height="43"></td>
+                    <td class="Column70">If (x = 0) then...</td>
+                </tr>
+            </tbody></table>
+
+            <h2>Configuration Options</h2>
+
+            <p>
+                Users can optionally edit the XML-based "wrpn.config" 
+file to change some of the calculator's features/properties.  The 
+location and exact name
+                of this file is very much platform dependent.  Android 
+users have a built-in configuration menu (since it is often difficult
+                to get to the wrpn.config file without a 3rd party app)
+            </p>
+            <p><i>Note: Be careful, since there's no input validation to prevent bogus entries</i>
+            </p>
+            <ul>
+                <li><strong>PrgmMemoryLines</strong>: The number of "lines" of memory available for programs.  The default is 203 (which
+                 matches the physical calculator)</li>
+                <li><strong>SyncConversions</strong>: Do you want to "synchronize" the values between floating point and binary mode.
+                  The default is True (which does not match the physical calculator)</li>
+                <li><strong>SleepDelay</strong>: The amount of time (in milliseconds) for error/status messages to appear on the
+                calculator's screen.  The default is 1500</li>
+                <li><strong>NumRegisters</strong>: The number of registers available.  The default is 32 (which matches the physical calculator)</li>
+                <li><strong>Orientation</strong>: <i>(Android Only)</i> Do you want to "lock" the orientation.  Valid options are "Auto",
+                "Landscape", and "Portrait".  The default is Auto</li>
+            </ul>
+            <p><i>Note: Changes do not go into effect until the program is restarted</i></p>
+
+            <h2>State Files</h2>
+            <p>Programs and calculator settings are stored in XML-based 
+"saved state" files.  The location of these files is platform dependent.
+ 
+            The default name is CalcState.xml, but you create many state
+ files.  The calculator does not have a built-in feature for managing
+             these files, so  you must use the normal operating system 
+tools to copy, move, delete, or rename these files.</p>
+            <p>
+                <i>Note: Editing of these files is allowed, but be careful... since there are very few input validation checks</i>
+            </p>
+        </div>
+        <div id="Footer">
+            <p>
+                Last Edited: 
+                <script type="text/javascript">
+                    /* get the last modified date of the file */
+                    var ModDate = new Date(document.lastModified);
+                    document.write(ModDate.toDateString());
+                </script>Fri Jan 15 2016
+            </p>
+        </div>
+    </div>
+
+
+</body></html>
