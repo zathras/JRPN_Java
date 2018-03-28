@@ -2507,10 +2507,7 @@ public class fmMain extends javax.swing.JFrame {
                 break;
             case TwosComp:
                 mOption2sComp.setSelected(true);
-                break;
-            case Unsigned:
-                mOptionUnsigned.setSelected(true);
-                break;
+                break; case Unsigned: mOptionUnsigned.setSelected(true); break;
         }
 
         // The Flags Menu
@@ -2562,17 +2559,27 @@ public class fmMain extends javax.swing.JFrame {
             public void run() {
                 final fmMain main_form = new fmMain();
                 main_form.setLocationByPlatform(true);
-                EventQueue.invokeLater(new Runnable() {
+                Thread t = new Thread() {
                     @Override
                     public void run() {
-                        main_form.setVisible(true);
-                        // Doing this even later might help with the
-                        // redisplay-on-launch problem, and it can't hurt.
-                        // On Ubuntu, I'm still seeing a first resize to
-                        // 512x320, then, after setVisible(), a second resize
-                        // to 522x350.
+                        try {
+                            sleep(1);
+                        } catch (InterruptedException ex) {
+                        }
+                        EventQueue.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                main_form.setVisible(true);
+                                // This is kind of crazy, but by letting things settle before we make
+                                // the form visible, I don't see resize-on-launch on Ubuntu.  Deferring
+                                // to a low-priority thread that defers back to the event queue can't
+                                // hurt, and it seems to help -- I only see zero to one resize(s) this way.
+                            }
+                        });
                     }
-                });
+                };
+                t.setPriority(Thread.MIN_PRIORITY);
+                t.start();
             }
         });
     }
