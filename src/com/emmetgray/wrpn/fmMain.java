@@ -29,6 +29,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 // The main form for the calculator
 public class fmMain extends javax.swing.JFrame {
 
+    private final static String CONFIG_FILE_NAME = ".WRPN.config";
+    private final static String STATE_FILE_NAME = ".WRPN.CalcState.xml";
+
     static java.util.Properties prop;
     final static int CALC_WIDTH = 512;
     final static int CALC_HEIGHT = 320;
@@ -97,7 +100,7 @@ public class fmMain extends javax.swing.JFrame {
         manager.addKeyEventDispatcher(new MyDispatcher());
 
         // copy the "prototype" config file if it doesn't already exist
-        File config = new File(System.getProperty("user.home"), ".WRPN.config");
+        File config = new File(System.getProperty("user.home"), CONFIG_FILE_NAME);
         if (!config.exists()) {
             BufferedWriter sw = null;
             String line;
@@ -1796,6 +1799,8 @@ public class fmMain extends javax.swing.JFrame {
     private void mOptionClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mOptionClearActionPerformed
         // Load from the resource
         LoadState(fmMain.class.getResourceAsStream("/com/emmetgray/wrpn/CalcState.xml"));
+        // Not STATE_FILE_NAME; that's the external name, and this is the internal
+        // file with the defaults.
         UpdateMenu();
         ProcessPacket(c.ProcessKey(-1));
     }//GEN-LAST:event_mOptionClearActionPerformed
@@ -2285,7 +2290,7 @@ public class fmMain extends javax.swing.JFrame {
         File StateFile;
 
         // save to the user's version
-        StateFile = new File(System.getProperty("user.home"), "CalcState.xml");
+        StateFile = new File(System.getProperty("user.home"), STATE_FILE_NAME);
         SaveState(StateFile.getPath());
     }
 
@@ -2315,11 +2320,11 @@ public class fmMain extends javax.swing.JFrame {
         File StateFile;
 
         // get the user's version
-        StateFile = new File(System.getProperty("user.home"), "CalcState.xml");
+        StateFile = new File(System.getProperty("user.home"), STATE_FILE_NAME);
 
         // if the user doesn't have a state file, then use the default
         if (!StateFile.exists()) {
-            StateFile = new File(System.getProperty("user.dir"), "CalcState.xml");
+            StateFile = new File(System.getProperty("user.dir"), STATE_FILE_NAME);
 
             // if that doesn't exist, then just quit
             if (!StateFile.exists()) {

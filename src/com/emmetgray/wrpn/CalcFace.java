@@ -71,7 +71,7 @@ public class CalcFace extends JLabel {
             super(left, text);
             this.scaleInfo = scaleInfo;
             this.right = right;
-            this.linesUp =linesUp;
+            this.linesUp = linesUp;
         }
 
         protected int getRightX() {
