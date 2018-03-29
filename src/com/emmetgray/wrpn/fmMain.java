@@ -18,7 +18,6 @@ package com.emmetgray.wrpn;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
-import java.awt.event.KeyEvent;
 import java.awt.print.PrinterException;
 import java.io.*;
 import java.util.logging.Level;
@@ -29,8 +28,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 // The main form for the calculator
 public class fmMain extends javax.swing.JFrame {
 
-    private final static String CONFIG_FILE_NAME = ".WRPN.config";
-    private final static String STATE_FILE_NAME = ".WRPN.CalcState.xml";
+    private final static String CONFIG_FILE_NAME = ".JRPN.config";
+    private final static String STATE_FILE_NAME = ".JRPN.CalcState.xml";
 
     static java.util.Properties prop;
     final static int CALC_WIDTH = 512;
@@ -47,6 +46,39 @@ public class fmMain extends javax.swing.JFrame {
     private Rectangle lastFaceBounds = null;
 
     private Image calcFaceImage;
+    private ImageIcon jupiterIcon;
+    private Image jupiterIconImage;
+    private Font jupiterFont;
+    private FontMetrics jupiterFontMetrics;
+    private int jupiterTextWidth;
+    private final static String JUPITER_TEXT = "JRPN";
+
+    private JupiterLabel jupiterLabel;
+
+    private class JupiterLabel extends JLabel {
+        @Override
+        public void paint(Graphics legacyG) {
+            Graphics2D g = (Graphics2D) legacyG;
+            super.paint(g);
+
+            int width = getWidth();
+            int height = getHeight();
+            g.setColor(Color.black);
+            g.fillRect(0, 0, width, height);
+            g.setColor(new Color(231, 231, 231));
+            g.fillRect(scaleInfo.scaleX(1), scaleInfo.scaleY(1),
+                       width - scaleInfo.scaleX(2), height - scaleInfo.scaleY(2));
+            g.drawImage(jupiterIcon.getImage(),
+                        (getWidth() - jupiterIcon.getImage().getWidth(null))/2,
+                        scaleInfo.scaleY(2), this);
+            g.setColor(Color.black);
+            g.setStroke(new BasicStroke(scaleInfo.scale(1)));
+            g.drawLine(0, scaleInfo.scaleY(31), width, scaleInfo.scaleY(31));
+            g.setFont(jupiterFont);
+            g.drawString(JUPITER_TEXT, scaleInfo.scaleX(1) + (width - jupiterTextWidth) / 2,
+                         scaleInfo.scaleY(31) + jupiterFontMetrics.getAscent());
+        }
+    }
 
     private static class ButtonIcons {
         ImageIcon buttonIcon;
@@ -54,16 +86,22 @@ public class fmMain extends javax.swing.JFrame {
         Image buttonImage;
         Image buttonPressedImage;
 
-        ButtonIcons(String name, String downName) {
+        ButtonIcons(String name, String downName, MediaTracker t, int id) {
             buttonIcon = new ImageIcon(getClass().getResource("/com/emmetgray/wrpn/resources/" + name));
             buttonImage = buttonIcon.getImage();
+            t.addImage(buttonImage, id);
             buttonPressedIcon = new ImageIcon(getClass().getResource("/com/emmetgray/wrpn/resources/" + downName));
             buttonPressedImage = buttonPressedIcon.getImage();
+            t.addImage(buttonPressedImage, id+1);
         }
 
-        void scaleTo(int width, int height) {
-            buttonIcon = new ImageIcon(buttonImage.getScaledInstance(width, height, Image.SCALE_SMOOTH));
-            buttonPressedIcon = new ImageIcon(buttonPressedImage.getScaledInstance(width, height, Image.SCALE_SMOOTH));
+        void scaleTo(int width, int height, MediaTracker t, int id) {
+            Image im =  buttonImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            t.addImage(im, id);
+            buttonIcon = new ImageIcon(im);
+            im = buttonPressedImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            t.addImage(im, id+1);
+            buttonPressedIcon = new ImageIcon(im);
         }
     }
     private ButtonIcons buttonIcons;
@@ -73,7 +111,7 @@ public class fmMain extends javax.swing.JFrame {
 
     private ScaleInfo scaleInfo = new ScaleInfo();
 
-    public fmMain() {
+    public fmMain() throws InterruptedException {
         initComponents();
 
         // create the event listener for the buttons
@@ -92,8 +130,8 @@ public class fmMain extends javax.swing.JFrame {
             }
         }
 
-        this.setIconImage(new ImageIcon(getClass().getResource("/com/emmetgray/wrpn/resources/WRPN_ico.png")).getImage());
-        this.setTitle("Reverse Polish Notation Caclulator");
+        this.setIconImage(new ImageIcon(getClass().getResource("/com/emmetgray/wrpn/resources/JRPN_ico.png")).getImage());
+        this.setTitle("JRPN 16c");
         
         // configure a single key event manager
         KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager(); 
@@ -108,7 +146,7 @@ public class fmMain extends javax.swing.JFrame {
             try {
                 sw = new BufferedWriter(new FileWriter(config));
                 BufferedReader sr = new BufferedReader(new InputStreamReader(
-                        fmMain.class.getResourceAsStream("/com/emmetgray/wrpn/WRPNconfig.xml")));
+                        fmMain.class.getResourceAsStream("/com/emmetgray/wrpn/JRPNconfig.xml")));
 
                 // copy the file
                 while ((line = sr.readLine()) != null) {
@@ -166,9 +204,10 @@ public class fmMain extends javax.swing.JFrame {
      * For reference, here's what the real calculator looks like:
      * https://www.scss.tcd.ie/SCSSTreasuresCatalog/hardware/temp-photos-Canon-101-03-20160312/HP-16C/IMG_0090.JPG
      */
-    private void initComponents() {
+    private void initComponents() throws InterruptedException {
         jLayeredPane1 = new javax.swing.JLayeredPane();
         tbDisplay = new javax.swing.JTextPane();
+        jupiterLabel = new JupiterLabel();
         lbFKey = new javax.swing.JLabel();
         lbGKey = new javax.swing.JLabel();
         lbCarry = new javax.swing.JLabel();
@@ -281,7 +320,12 @@ public class fmMain extends javax.swing.JFrame {
         });
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
-                fmMain_Resized(evt);
+                try {
+                    fmMain_Resized(evt);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                    System.exit(1);
+                }
             }
         });
 
@@ -292,6 +336,9 @@ public class fmMain extends javax.swing.JFrame {
         tbDisplay.setText("0.000");
         tbDisplay.setBounds(54, 31, 320, 38);
         jLayeredPane1.add(tbDisplay, javax.swing.JLayeredPane.PALETTE_LAYER);
+
+        jupiterLabel.setBounds(455, 21, 488, 65);
+        jLayeredPane1.add(jupiterLabel, JLayeredPane.MODAL_LAYER);
 
         lbFKey.setFont(new java.awt.Font("Tahoma", 0, 7)); // NOI18N
         lbFKey.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -323,19 +370,33 @@ public class fmMain extends javax.swing.JFrame {
         lbPrgm.setBounds(320, 55, 30, 12);
         jLayeredPane1.add(lbPrgm, javax.swing.JLayeredPane.MODAL_LAYER);
 
+        MediaTracker tracker = new MediaTracker(this);
         ImageIcon calcFaceIcon = new ImageIcon(getClass().
                 getResource("/com/emmetgray/wrpn/resources/Background.png"));
         calcFaceImage = calcFaceIcon.getImage();
+        tracker.addImage(calcFaceImage, 1);
         pnCalcFace.setIcon(calcFaceIcon);
         pnCalcFace.setVerifyInputWhenFocusTarget(false);
         pnCalcFace.setBounds(0, 0, 512, 320);
         lastFaceBounds = null;  // Just being conservative.
         jLayeredPane1.add(pnCalcFace, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        buttonIcons = new ButtonIcons("Bn.png", "BnDown.png");
-        enterButtonIcons = new ButtonIcons("BnEnt.png", "BnEntDn.png");
-        yellowButtonIcons = new ButtonIcons("BnFkey.png", "BnFkeyDn.png");
-        blueButtonIcons = new ButtonIcons("BnGkey.png", "BnGkeyDn.png");
+        jupiterIcon = new ImageIcon(getClass().getResource("/com/emmetgray/wrpn/resources/jupiter.png"));
+        jupiterIconImage = jupiterIcon.getImage();
+        tracker.addImage(jupiterIconImage, 2);
+
+        buttonIcons = new ButtonIcons("Bn.png", "BnDown.png", tracker, 3);
+        enterButtonIcons = new ButtonIcons("BnEnt.png", "BnEntDn.png", tracker, 5);
+        yellowButtonIcons = new ButtonIcons("BnFkey.png", "BnFkeyDn.png", tracker, 7);
+        blueButtonIcons = new ButtonIcons("BnGkey.png", "BnGkeyDn.png", tracker, 9);
+
+        Image scaledJupiter =
+                jupiterIconImage.getScaledInstance(scaleInfo.scale(jupiterIconImage.getWidth(null))/4,
+                                        scaleInfo.scale(jupiterIconImage.getHeight(null))/4,
+                                        Image.SCALE_SMOOTH);
+        jupiterIcon.setImage(scaledJupiter);
+        tracker.addImage(scaledJupiter, 11);
+        tracker.waitForAll();
 
         bnA.setIcon(buttonIcons.buttonIcon);
         bnA.setPressedIcon(buttonIcons.buttonPressedIcon);
@@ -1254,7 +1315,7 @@ public class fmMain extends javax.swing.JFrame {
     }
 
     // move and resize the controls to match the new size of the form
-    private void fmMain_Resized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_fmMain_Resized
+    private void fmMain_Resized(java.awt.event.ComponentEvent evt)  throws InterruptedException {
         int x, y, width, height;
 
         Rectangle bounds = getContentPane().getBounds();
@@ -1267,15 +1328,6 @@ public class fmMain extends javax.swing.JFrame {
         // resize the Layered Panel and Label
         jLayeredPane1.setBounds(0, 0, bounds.width, bounds.height);
         pnCalcFace.setBounds(0, 0, bounds.width, bounds.height);
-        // now resize the background graphics in the Label
-        pnCalcFace.setIcon(new ImageIcon(
-                calcFaceImage.getScaledInstance(bounds.width, bounds.height, Image.SCALE_SMOOTH)));
-
-        width = BUTTON_WIDTH * bounds.width / CALC_WIDTH;
-        height = BUTTON_HEIGHT * bounds.height / CALC_HEIGHT;
-        buttonIcons.scaleTo(width, height);
-        yellowButtonIcons.scaleTo(width, height);
-        blueButtonIcons.scaleTo(width, height);
 
         if (512 * bounds.width / CALC_WIDTH <= 512 * bounds.height / CALC_HEIGHT) {
             scaleInfo.drawScaleNumerator = bounds.width;
@@ -1288,6 +1340,25 @@ public class fmMain extends javax.swing.JFrame {
         scaleInfo.drawScaleDenominatorX = CALC_WIDTH;
         scaleInfo.drawScaleNumeratorY = bounds.height;
         scaleInfo.drawScaleDenominatorY = CALC_HEIGHT;
+
+        MediaTracker tracker = new MediaTracker(this);
+        Image image;
+
+        // now resize the background graphics in the Label
+        image = calcFaceImage.getScaledInstance(bounds.width, bounds.height, Image.SCALE_SMOOTH);
+        tracker.addImage(image, 1);
+        pnCalcFace.setIcon(new ImageIcon(image));
+        image = jupiterIconImage.getScaledInstance(scaleInfo.scale(jupiterIconImage.getWidth(null))/4,
+                                        scaleInfo.scale(jupiterIconImage.getHeight(null))/4,
+                                        Image.SCALE_SMOOTH);
+        tracker.addImage(image, 2);
+        jupiterIcon = new ImageIcon(image);
+
+        width = BUTTON_WIDTH * bounds.width / CALC_WIDTH;
+        height = BUTTON_HEIGHT * bounds.height / CALC_HEIGHT;
+        buttonIcons.scaleTo(width, height, tracker, 3);
+        yellowButtonIcons.scaleTo(width, height, tracker, 5);
+        blueButtonIcons.scaleTo(width, height, tracker, 7);
 
         // resize and move the buttons
         for (Component comp : jLayeredPane1.getComponents()) {
@@ -1308,7 +1379,7 @@ public class fmMain extends javax.swing.JFrame {
 
                 bn.setBounds(x, y, width, button_height);
                 if (bn == bnEnt) {
-                    enterButtonIcons.scaleTo(width, button_height);
+                    enterButtonIcons.scaleTo(width, button_height, tracker, 9);
                     bn.setIcon(enterButtonIcons.buttonIcon);
                     bn.setPressedIcon(enterButtonIcons.buttonPressedIcon);
                 } else if (bn == bnFKey) {
@@ -1323,6 +1394,7 @@ public class fmMain extends javax.swing.JFrame {
                 }
             }
         }
+        tracker.waitForAll();
         setFonts();
 
         // Move and resize the display textbox
@@ -1353,7 +1425,7 @@ public class fmMain extends javax.swing.JFrame {
 
         // resize and move the labels
         for (Component comp : jLayeredPane1.getComponents()) {
-            if (comp instanceof JLabel) {
+            if (comp instanceof JLabel && comp != jupiterLabel) {
                 JLabel lb = (JLabel) comp;
                 if (lb.getName() != null) {
                     x = Integer.parseInt(lb.getName()) * this.getContentPane().getBounds().width / CALC_WIDTH;
@@ -1362,6 +1434,8 @@ public class fmMain extends javax.swing.JFrame {
                 }
             }
         }
+        jupiterLabel.setBounds(scaleInfo.scaleX(455), scaleInfo.scaleY(21),
+                               scaleInfo.scaleX(34), scaleInfo.scaleY(45));
 
         pnCalcFace.resize(scaleInfo);
     }//GEN-LAST:event_fmMain_Resized
@@ -1381,6 +1455,9 @@ public class fmMain extends javax.swing.JFrame {
         scaleInfo.yellowFontMetrics = scaleInfo.blueFontMetrics;
         scaleInfo.faceFont = new Font("Lucidia Sans", Font.BOLD, scaleInfo.scale(12));
         scaleInfo.faceFontMetrics = pnCalcFace.getFontMetrics(scaleInfo.faceFont);
+        jupiterFont = new Font("Lucidia Sans", Font.BOLD, scaleInfo.scale(11));
+        jupiterFontMetrics = jupiterLabel.getFontMetrics(jupiterFont);
+        jupiterTextWidth = jupiterFontMetrics.stringWidth(JUPITER_TEXT);
     }
 
     private float calculateDisplayFont(Font ft, String str, int width) {
@@ -2557,29 +2634,14 @@ public class fmMain extends javax.swing.JFrame {
 
             @Override
             public void run() {
-                final fmMain main_form = new fmMain();
-                main_form.setLocationByPlatform(true);
-                Thread t = new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            sleep(1);
-                        } catch (InterruptedException ex) {
-                        }
-                        EventQueue.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                main_form.setVisible(true);
-                                // This is kind of crazy, but by letting things settle before we make
-                                // the form visible, I don't see resize-on-launch on Ubuntu.  Deferring
-                                // to a low-priority thread that defers back to the event queue can't
-                                // hurt, and it seems to help -- I only see zero to one resize(s) this way.
-                            }
-                        });
-                    }
-                };
-                t.setPriority(Thread.MIN_PRIORITY);
-                t.start();
+                try {
+                    final fmMain main_form = new fmMain();
+                    main_form.setLocationByPlatform(true);
+                    main_form.setVisible(true);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                    System.exit(1);
+                }
             }
         });
     }

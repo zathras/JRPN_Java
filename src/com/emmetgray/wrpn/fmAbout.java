@@ -45,7 +45,7 @@ public class fmAbout extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("About WRPN");
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/emmetgray/wrpn/resources/WRPN_small.png"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/emmetgray/wrpn/resources/JRPN_small.png"))); // NOI18N
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/emmetgray/wrpn/resources/Egray_small.png"))); // NOI18N
 
@@ -59,7 +59,7 @@ public class fmAbout extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
         jLabel3.setText("WRPN");
 
-        jLabel4.setText("Windows Reverse Polish Notation Calculator");
+        jLabel4.setText("Windows Reverse Polish Notation Calculator 16C");
 
         lbVersion.setText("Version: ");
 
