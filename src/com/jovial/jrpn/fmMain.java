@@ -18,6 +18,7 @@ package com.jovial.jrpn;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
+import java.awt.event.ComponentEvent;
 import java.awt.print.PrinterException;
 import java.io.*;
 import java.util.logging.Level;
@@ -53,10 +54,8 @@ public class fmMain extends javax.swing.JFrame {
     private int jupiterTextWidth;
     private final static String JUPITER_TEXT = "JRPN";
 
-    private final static int JUPITER_ICON_HEIGHT = 47;
-    private final static int JUPITER_ICON_WIDTH = 36;
     private final static Rectangle JUPITER_ICON_BOUNDS
-            = new Rectangle(452, 21, 36, 47);
+            = new Rectangle(452, 21, 36, 48);
     private JupiterLabel jupiterLabel;
 
     private class JupiterLabel extends JLabel {
@@ -117,6 +116,7 @@ public class fmMain extends javax.swing.JFrame {
     private ScaleInfo scaleInfo = new ScaleInfo();
 
     public fmMain() throws InterruptedException {
+        super();
         initComponents();
 
         // create the event listener for the buttons
@@ -328,9 +328,14 @@ public class fmMain extends javax.swing.JFrame {
                 try {
                     fmMain_Resized(evt);
                 } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                    System.exit(1);
+                    throw new RuntimeException(ex);
                 }
+            }
+            public void componentShown(ComponentEvent e) {
+                ensureMinimumSizeSet();
+                // I think this never has any effect, because I think that calling pack()
+                // causes a resize event before the componet is set to visible.  But, this
+                // add a little insurance against platform variation.
             }
         });
 
@@ -1316,13 +1321,26 @@ public class fmMain extends javax.swing.JFrame {
         setFonts();
         pnCalcFace.resize(scaleInfo);
         pack();
-        setMinimumSize(getSize());
+        // Don't try this:
+        //     setMinimumSize(getSize());
+        // That causes a resize to a size slightly bigger than ideal, and as a result, a flash on
+        // startup, at least on Ubuntu.  pack() causes the size to change from 0,0, so I think
+        // we're guaranteed to get a resize event.
+    }
+
+    private void ensureMinimumSizeSet() {
+        if (!isMinimumSizeSet()) {
+            setMinimumSize(getSize());
+        }
     }
 
     // move and resize the controls to match the new size of the form
     private void fmMain_Resized(java.awt.event.ComponentEvent evt)  throws InterruptedException {
         int x, y, width, height;
 
+        // We get a resize event for the pack(), and by then, getSize()
+        // reports a reliable number (at least on Ubuntu).
+        ensureMinimumSizeSet();
         Rectangle bounds = getContentPane().getBounds();
 
         if (bounds.equals(lastFaceBounds)) {
