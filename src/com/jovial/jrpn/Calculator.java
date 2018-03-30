@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-package com.emmetgray.wrpn;
+package com.jovial.jrpn;
 import java.text.NumberFormat;
 
 // This is the calculator "engine"... it processes keystrokes and

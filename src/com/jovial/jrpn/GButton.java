@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-package com.emmetgray.wrpn;
+package com.jovial.jrpn;
 
 import javax.swing.*;
 import java.awt.*;

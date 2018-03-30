@@ -1,8 +1,9 @@
-# WRPN, Desktop Java version
+# JRPN, Desktop Java version
 
 ![Screenshot](README.dir/screenshot_small.png)
 
-WRPN is [Emmet Gray's](http://www.emmet-gray.com/) wonderful little
+JRPN is and adaptation of [Emmet Gray's](http://www.emmet-gray.com/) 
+wonderful little WRPN
 calculator, modeled after the [HP 16-C](https://en.wikipedia.org/wiki/HP-16C).
 The original is available at 
 [http://www.wrpn.emmet-gray.com/](http://www.wrpn.emmet-gray.com/).
@@ -29,7 +30,7 @@ I don't have any predictions as to when I might work on this.  For now, I just
 wanted to make a repository before I start tinkering.  It's nice to have a
 couple of projects on the back burner :-)
 
-Note that I'm also fiddling with the Android version of WRPN,
+Note that I'm also fiddling with and Android version of WRPN,
 over in
 [https://github.com/zathras/WRPN_Android](https://github.com/zathras/WRPN_Android).
 

@@ -1,4 +1,4 @@
-package com.emmetgray.wrpn;
+package com.jovial.jrpn;
 
 import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
@@ -293,7 +293,7 @@ public class CalcState {
         root.setAttribute("saved", new java.util.Date().toString());
         doc.appendChild(root);
 
-        root.appendChild(doc.createComment("WRPN CalcState v" + fmMain.prop.getProperty("Version").substring(0, 3)));
+        root.appendChild(doc.createComment("JRPN CalcState v" + fmMain.prop.getProperty("Version").substring(0, 3)));
 
         xn1 = root.appendChild(doc.createElement("SaveOnExit"));
         xn1.appendChild(doc.createTextNode(pSaveOnExit.toString()));

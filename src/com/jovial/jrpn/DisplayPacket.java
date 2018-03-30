@@ -1,4 +1,4 @@
-package com.emmetgray.wrpn;
+package com.jovial.jrpn;
 
 // A "Return Packet" that contains all of the information required by the GUI
 public class DisplayPacket {

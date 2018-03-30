@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.emmetgray.wrpn;
+package com.jovial.jrpn;
 
 import java.awt.Image;
 import javax.swing.ImageIcon;
@@ -32,7 +32,7 @@ public class fmBackPanel extends javax.swing.JFrame {
         pnBackPanel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("WRPN Back Panel");
+        setTitle("JRPN Back Panel");
         setMinimumSize(new java.awt.Dimension(512, 320));
         setPreferredSize(new java.awt.Dimension(512, 320));
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -42,7 +42,7 @@ public class fmBackPanel extends javax.swing.JFrame {
         });
 
         pnBackPanel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        pnBackPanel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/emmetgray/wrpn/resources/BackPanel.png"))); // NOI18N
+        pnBackPanel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/jovial/jrpn/resources/BackPanel.png"))); // NOI18N
         pnBackPanel.setMaximumSize(null);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -66,7 +66,7 @@ public class fmBackPanel extends javax.swing.JFrame {
         pnBackPanel.setBounds(0, 0, this.getContentPane().getBounds().width, this.getContentPane().getBounds().height);
 
         // now resize the background graphics in the Label
-        Image img = new ImageIcon(getClass().getResource("/com/emmetgray/wrpn/resources/BackPanel.png")).getImage();
+        Image img = new ImageIcon(getClass().getResource("/com/jovial/jrpn/resources/BackPanel.png")).getImage();
         pnBackPanel.setIcon(new ImageIcon(img.getScaledInstance(this.getContentPane().getBounds().width, this.getContentPane().getBounds().height, Image.SCALE_SMOOTH)));
     }//GEN-LAST:event_formComponentResized
 

@@ -1,4 +1,4 @@
-This is WRPN v6.0, original release date 5 Feb 12.
+This is JRPN, built out of WRPN v6.0, original release date 5 Feb 12.
 
 WRPN is a public domain calculator for Microsoft Windows that is modeled after the Hewlett-Packard HP-16c.  This is not a Hewlett-Packard product.
 

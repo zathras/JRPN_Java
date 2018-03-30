@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-package com.emmetgray.wrpn;
+package com.jovial.jrpn;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
@@ -87,10 +87,10 @@ public class fmMain extends javax.swing.JFrame {
         Image buttonPressedImage;
 
         ButtonIcons(String name, String downName, MediaTracker t, int id) {
-            buttonIcon = new ImageIcon(getClass().getResource("/com/emmetgray/wrpn/resources/" + name));
+            buttonIcon = new ImageIcon(getClass().getResource("/com/jovial/jrpn/resources/" + name));
             buttonImage = buttonIcon.getImage();
             t.addImage(buttonImage, id);
-            buttonPressedIcon = new ImageIcon(getClass().getResource("/com/emmetgray/wrpn/resources/" + downName));
+            buttonPressedIcon = new ImageIcon(getClass().getResource("/com/jovial/jrpn/resources/" + downName));
             buttonPressedImage = buttonPressedIcon.getImage();
             t.addImage(buttonPressedImage, id+1);
         }
@@ -130,7 +130,7 @@ public class fmMain extends javax.swing.JFrame {
             }
         }
 
-        this.setIconImage(new ImageIcon(getClass().getResource("/com/emmetgray/wrpn/resources/JRPN_ico.png")).getImage());
+        this.setIconImage(new ImageIcon(getClass().getResource("/com/jovial/jrpn/resources/JRPN_ico.png")).getImage());
         this.setTitle("JRPN 16c");
         
         // configure a single key event manager
@@ -146,7 +146,7 @@ public class fmMain extends javax.swing.JFrame {
             try {
                 sw = new BufferedWriter(new FileWriter(config));
                 BufferedReader sr = new BufferedReader(new InputStreamReader(
-                        fmMain.class.getResourceAsStream("/com/emmetgray/wrpn/JRPNconfig.xml")));
+                        fmMain.class.getResourceAsStream("/com/jovial/jrpn/JRPNconfig.xml")));
 
                 // copy the file
                 while ((line = sr.readLine()) != null) {
@@ -172,10 +172,10 @@ public class fmMain extends javax.swing.JFrame {
         prop.setProperty("PrgmMemoryLines", "302");
         prop.setProperty("SleepDelay", "1500");
         prop.setProperty("SyncConversions", "true");
-        prop.setProperty("HomeURL", "http://www.wrpn.emmet-gray.com");
+        prop.setProperty("HomeURL", "http://jrpn.jovial.com");
         prop.setProperty("Email", "egray1@hot.rr.com");
         prop.setProperty("Version", "6.0.8");
-        prop.setProperty("HelpURL", "http://www.wrpn.emmet-gray.com/UsersGuide.html");
+        prop.setProperty("HelpURL", "http://www.wrpn.emmet-gray.com/UsersGuide.html"); // TODO
 
         // load the config file.  Error are ignored
         try {
@@ -214,45 +214,45 @@ public class fmMain extends javax.swing.JFrame {
         lbOverflow = new javax.swing.JLabel();
         lbPrgm = new javax.swing.JLabel();
         pnCalcFace = new CalcFace();
-        bnA = new com.emmetgray.wrpn.GButton();
-        bnB = new com.emmetgray.wrpn.GButton();
-        bnC = new com.emmetgray.wrpn.GButton();
-        bnD = new com.emmetgray.wrpn.GButton();
-        bnE = new com.emmetgray.wrpn.GButton();
-        bnF = new com.emmetgray.wrpn.GButton();
-        bn7 = new com.emmetgray.wrpn.GButton();
-        bn8 = new com.emmetgray.wrpn.GButton();
-        bn9 = new com.emmetgray.wrpn.GButton();
-        bnDiv = new com.emmetgray.wrpn.GButton();
-        bnGSB = new com.emmetgray.wrpn.GButton();
-        bnGTO = new com.emmetgray.wrpn.GButton();
-        bnHEX = new com.emmetgray.wrpn.GButton();
-        bnDEC = new com.emmetgray.wrpn.GButton();
-        bnOCT = new com.emmetgray.wrpn.GButton.Sqrt();
-        bnBIN = new com.emmetgray.wrpn.GButton();
-        bn4 = new com.emmetgray.wrpn.GButton();
-        bn5 = new com.emmetgray.wrpn.GButton();
-        bn6 = new com.emmetgray.wrpn.GButton();
-        bnMul = new com.emmetgray.wrpn.GButton();
-        bnRS = new com.emmetgray.wrpn.GButton();
-        bnSST = new com.emmetgray.wrpn.GButton();
-        bnRol = new com.emmetgray.wrpn.GButton();
-        bnXY = new com.emmetgray.wrpn.GButton();
-        bnBSP = new com.emmetgray.wrpn.GButton();
-        bnEnt = new com.emmetgray.wrpn.GButton.Enter();
-        bn1 = new com.emmetgray.wrpn.GButton();
-        bn2 = new com.emmetgray.wrpn.GButton();
-        bn3 = new com.emmetgray.wrpn.GButton();
-        bnMin = new com.emmetgray.wrpn.GButton();
-        bnON = new com.emmetgray.wrpn.GButton();
-        bnFKey = new com.emmetgray.wrpn.GButton.Shift();
-        bnGKey = new com.emmetgray.wrpn.GButton.Shift();
-        bnSTO = new com.emmetgray.wrpn.GButton();
-        bnRCL = new com.emmetgray.wrpn.GButton();
-        bn0 = new com.emmetgray.wrpn.GButton();
-        bnDp = new com.emmetgray.wrpn.GButton();
-        bnCHS = new com.emmetgray.wrpn.GButton();
-        bnPls = new com.emmetgray.wrpn.GButton();
+        bnA = new GButton();
+        bnB = new GButton();
+        bnC = new GButton();
+        bnD = new GButton();
+        bnE = new GButton();
+        bnF = new GButton();
+        bn7 = new GButton();
+        bn8 = new GButton();
+        bn9 = new GButton();
+        bnDiv = new GButton();
+        bnGSB = new GButton();
+        bnGTO = new GButton();
+        bnHEX = new GButton();
+        bnDEC = new GButton();
+        bnOCT = new GButton.Sqrt();
+        bnBIN = new GButton();
+        bn4 = new GButton();
+        bn5 = new GButton();
+        bn6 = new GButton();
+        bnMul = new GButton();
+        bnRS = new GButton();
+        bnSST = new GButton();
+        bnRol = new GButton();
+        bnXY = new GButton();
+        bnBSP = new GButton();
+        bnEnt = new GButton.Enter();
+        bn1 = new GButton();
+        bn2 = new GButton();
+        bn3 = new GButton();
+        bnMin = new GButton();
+        bnON = new GButton();
+        bnFKey = new GButton.Shift();
+        bnGKey = new GButton.Shift();
+        bnSTO = new GButton();
+        bnRCL = new GButton();
+        bn0 = new GButton();
+        bnDp = new GButton();
+        bnCHS = new GButton();
+        bnPls = new GButton();
         mbMain = new javax.swing.JMenuBar();
         mFile = new javax.swing.JMenu();
         mFileOpen = new javax.swing.JMenuItem();
@@ -372,7 +372,7 @@ public class fmMain extends javax.swing.JFrame {
 
         MediaTracker tracker = new MediaTracker(this);
         ImageIcon calcFaceIcon = new ImageIcon(getClass().
-                getResource("/com/emmetgray/wrpn/resources/Background.png"));
+                getResource("/com/jovial/jrpn/resources/Background.png"));
         calcFaceImage = calcFaceIcon.getImage();
         tracker.addImage(calcFaceImage, 1);
         pnCalcFace.setIcon(calcFaceIcon);
@@ -381,7 +381,7 @@ public class fmMain extends javax.swing.JFrame {
         lastFaceBounds = null;  // Just being conservative.
         jLayeredPane1.add(pnCalcFace, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jupiterIcon = new ImageIcon(getClass().getResource("/com/emmetgray/wrpn/resources/jupiter.png"));
+        jupiterIcon = new ImageIcon(getClass().getResource("/com/jovial/jrpn/resources/jupiter.png"));
         jupiterIconImage = jupiterIcon.getImage();
         tracker.addImage(jupiterIconImage, 2);
 
@@ -1875,7 +1875,7 @@ public class fmMain extends javax.swing.JFrame {
     // Reset to the "factory defaults"
     private void mOptionClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mOptionClearActionPerformed
         // Load from the resource
-        LoadState(fmMain.class.getResourceAsStream("/com/emmetgray/wrpn/CalcState.xml"));
+        LoadState(fmMain.class.getResourceAsStream("/com/jovial/jrpn/CalcState.xml"));
         // Not STATE_FILE_NAME; that's the external name, and this is the internal
         // file with the defaults.
         UpdateMenu();
@@ -2646,45 +2646,45 @@ public class fmMain extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.emmetgray.wrpn.GButton bn0;
-    private com.emmetgray.wrpn.GButton bn1;
-    private com.emmetgray.wrpn.GButton bn2;
-    private com.emmetgray.wrpn.GButton bn3;
-    private com.emmetgray.wrpn.GButton bn4;
-    private com.emmetgray.wrpn.GButton bn5;
-    private com.emmetgray.wrpn.GButton bn6;
-    private com.emmetgray.wrpn.GButton bn7;
-    private com.emmetgray.wrpn.GButton bn8;
-    private com.emmetgray.wrpn.GButton bn9;
-    private com.emmetgray.wrpn.GButton bnA;
-    private com.emmetgray.wrpn.GButton bnB;
-    private com.emmetgray.wrpn.GButton bnBIN;
-    private com.emmetgray.wrpn.GButton bnBSP;
-    private com.emmetgray.wrpn.GButton bnC;
-    private com.emmetgray.wrpn.GButton bnCHS;
-    private com.emmetgray.wrpn.GButton bnD;
-    private com.emmetgray.wrpn.GButton bnDEC;
-    private com.emmetgray.wrpn.GButton bnDiv;
-    private com.emmetgray.wrpn.GButton bnDp;
-    private com.emmetgray.wrpn.GButton bnE;
-    private com.emmetgray.wrpn.GButton bnEnt;
-    private com.emmetgray.wrpn.GButton bnF;
-    private com.emmetgray.wrpn.GButton bnFKey;
-    private com.emmetgray.wrpn.GButton bnGKey;
-    private com.emmetgray.wrpn.GButton bnGSB;
-    private com.emmetgray.wrpn.GButton bnGTO;
-    private com.emmetgray.wrpn.GButton bnHEX;
-    private com.emmetgray.wrpn.GButton bnMin;
-    private com.emmetgray.wrpn.GButton bnMul;
-    private com.emmetgray.wrpn.GButton bnOCT;
-    private com.emmetgray.wrpn.GButton bnON;
-    private com.emmetgray.wrpn.GButton bnPls;
-    private com.emmetgray.wrpn.GButton bnRCL;
-    private com.emmetgray.wrpn.GButton bnRS;
-    private com.emmetgray.wrpn.GButton bnRol;
-    private com.emmetgray.wrpn.GButton bnSST;
-    private com.emmetgray.wrpn.GButton bnSTO;
-    private com.emmetgray.wrpn.GButton bnXY;
+    private GButton bn0;
+    private GButton bn1;
+    private GButton bn2;
+    private GButton bn3;
+    private GButton bn4;
+    private GButton bn5;
+    private GButton bn6;
+    private GButton bn7;
+    private GButton bn8;
+    private GButton bn9;
+    private GButton bnA;
+    private GButton bnB;
+    private GButton bnBIN;
+    private GButton bnBSP;
+    private GButton bnC;
+    private GButton bnCHS;
+    private GButton bnD;
+    private GButton bnDEC;
+    private GButton bnDiv;
+    private GButton bnDp;
+    private GButton bnE;
+    private GButton bnEnt;
+    private GButton bnF;
+    private GButton bnFKey;
+    private GButton bnGKey;
+    private GButton bnGSB;
+    private GButton bnGTO;
+    private GButton bnHEX;
+    private GButton bnMin;
+    private GButton bnMul;
+    private GButton bnOCT;
+    private GButton bnON;
+    private GButton bnPls;
+    private GButton bnRCL;
+    private GButton bnRS;
+    private GButton bnRol;
+    private GButton bnSST;
+    private GButton bnSTO;
+    private GButton bnXY;
     private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;

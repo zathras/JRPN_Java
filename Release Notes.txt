@@ -1,3 +1,6 @@
+March 2018:  WRPN developed on Github.  Release notes will be maintained
+via Github releases.
+
 6.0 5 Feb 12
     Total rewrite in .Net Framework 4.0
     Added main form resizing

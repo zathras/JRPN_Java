@@ -1,4 +1,4 @@
-package com.emmetgray.wrpn;
+package com.jovial.jrpn;
 
 // The main calculator stack
 public class CStack {

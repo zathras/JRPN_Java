@@ -1,4 +1,4 @@
-package com.emmetgray.wrpn;
+package com.jovial.jrpn;
 
 
 /*

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/WRPN_Java.iml" filepath="$PROJECT_DIR$/WRPN_Java.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JRPN_Java.iml" filepath="$PROJECT_DIR$/JRPN_Java.iml" />
     </modules>
   </component>
 </project>
