@@ -53,6 +53,10 @@ public class fmMain extends javax.swing.JFrame {
     private int jupiterTextWidth;
     private final static String JUPITER_TEXT = "JRPN";
 
+    private final static int JUPITER_ICON_HEIGHT = 47;
+    private final static int JUPITER_ICON_WIDTH = 36;
+    private final static Rectangle JUPITER_ICON_BOUNDS
+            = new Rectangle(452, 21, 36, 47);
     private JupiterLabel jupiterLabel;
 
     private class JupiterLabel extends JLabel {
@@ -66,17 +70,18 @@ public class fmMain extends javax.swing.JFrame {
             g.setColor(Color.black);
             g.fillRect(0, 0, width, height);
             g.setColor(new Color(231, 231, 231));
-            g.fillRect(scaleInfo.scaleX(1), scaleInfo.scaleY(1),
-                       width - scaleInfo.scaleX(2), height - scaleInfo.scaleY(2));
+            g.fillRoundRect(scaleInfo.scaleX(2), scaleInfo.scaleY(2),
+                       width - scaleInfo.scaleX(4), height - scaleInfo.scaleY(4),
+                       scaleInfo.scale(4), scaleInfo.scale(4));
             g.drawImage(jupiterIcon.getImage(),
                         (getWidth() - jupiterIcon.getImage().getWidth(null))/2,
                         scaleInfo.scaleY(2), this);
             g.setColor(Color.black);
             g.setStroke(new BasicStroke(scaleInfo.scale(1)));
-            g.drawLine(0, scaleInfo.scaleY(31), width, scaleInfo.scaleY(31));
+            g.drawLine(0, scaleInfo.scaleY(32), width, scaleInfo.scaleY(32));
             g.setFont(jupiterFont);
             g.drawString(JUPITER_TEXT, scaleInfo.scaleX(1) + (width - jupiterTextWidth) / 2,
-                         scaleInfo.scaleY(31) + jupiterFontMetrics.getAscent());
+                         scaleInfo.scaleY(32) + jupiterFontMetrics.getAscent());
         }
     }
 
@@ -337,7 +342,7 @@ public class fmMain extends javax.swing.JFrame {
         tbDisplay.setBounds(54, 31, 320, 38);
         jLayeredPane1.add(tbDisplay, javax.swing.JLayeredPane.PALETTE_LAYER);
 
-        jupiterLabel.setBounds(455, 21, 488, 65);
+        jupiterLabel.setBounds(JUPITER_ICON_BOUNDS);
         jLayeredPane1.add(jupiterLabel, JLayeredPane.MODAL_LAYER);
 
         lbFKey.setFont(new java.awt.Font("Tahoma", 0, 7)); // NOI18N
@@ -1434,8 +1439,11 @@ public class fmMain extends javax.swing.JFrame {
                 }
             }
         }
-        jupiterLabel.setBounds(scaleInfo.scaleX(455), scaleInfo.scaleY(21),
-                               scaleInfo.scaleX(34), scaleInfo.scaleY(45));
+        {
+            Rectangle b = JUPITER_ICON_BOUNDS;
+            jupiterLabel.setBounds(scaleInfo.scaleX(b.x), scaleInfo.scaleY(b.y),
+                                   scaleInfo.scaleX(b.width), scaleInfo.scaleY(b.height));
+        }
 
         pnCalcFace.resize(scaleInfo);
     }//GEN-LAST:event_fmMain_Resized
