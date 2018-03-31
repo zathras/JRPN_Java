@@ -3054,8 +3054,13 @@ public class Calculator {
                                     StringRight(RawDisplay.toString(), 17) + " o"));
                             break;
                         case Bin:
-                            Packet.setDisplayText(String.format("%1$39s",
-                                    StringRight(RawDisplay.toString(), 37) + " b"));
+                            if (cs.getWordSize() == 16) {
+                                Packet.setDisplayText(String.format("%1$21s",
+                                        StringRight(RawDisplay.toString(), 19) + " b"));
+                            } else {
+                                Packet.setDisplayText(String.format("%1$39s",
+                                        StringRight(RawDisplay.toString(), 37) + " b"));
+                            }
                             break;
                     }
                 }
@@ -3200,7 +3205,11 @@ public class Calculator {
                     if (!cs.isFlag(CalcState.CalcFlag.LeadingZero)) {
                         temp = TrimZeros(temp);
                     }
-                    DisplayText = String.format("%1$39s", temp + " b");
+                    if (cs.getWordSize() == 16) {
+                        DisplayText = String.format("%1$21s", temp + " b");
+                    } else {
+                        DisplayText = String.format("%1$39s", temp + " b");
+                    }
                 }
                 break;
         }
