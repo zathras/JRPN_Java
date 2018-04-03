@@ -686,7 +686,7 @@ public class fmMain extends javax.swing.JFrame {
 
         bnXY.setIcon(buttonIcons.buttonIcon);
         bnXY.setPressedIcon(buttonIcons.buttonPressedIcon);
-        bnXY.setWhiteLabel("x\u2B0Cy");   // x⬌y
+        bnXY.setWhiteLabel("x\u2276y");   // x≶y
         bnXY.setBlueLabel("PSE");
         bnXY.setKeyCode(52);
         bnXY.setName("");
@@ -886,8 +886,8 @@ public class fmMain extends javax.swing.JFrame {
                 new CalcFace.YellowText(bn8, "MASKR"),
                 new CalcFace.YellowText(bn9, "RMD"),
                 new CalcFace.YellowText(bnDiv, "XOR"),
-                new CalcFace.YellowText(bnGSB, "x\u2B0C(i)"),   // x⬌(i)
-                new CalcFace.YellowText(bnGTO, "x\u2B0CI"),   // x⬌I
+                new CalcFace.YellowText(bnGSB, "x\u2276(i)"),   // x≶(i)
+                new CalcFace.YellowText(bnGTO, "x\u2276I"),   // x≶I
                 new CalcFace.YellowMultiText(scaleInfo, bnHEX, bnBIN, 0, "SHOW"),
                 new CalcFace.YellowText(bn4, "SB"),
                 new CalcFace.YellowText(bn5, "CB"),
