@@ -1,0 +1,2 @@
+DejaVuSans-Bold font downloaded from http://www.fontspace.com/dejavu/dejavu-sans .
+I decided to bundle a font so that the symbols would render reliably.

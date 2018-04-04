@@ -32,6 +32,8 @@ public class fmMain extends javax.swing.JFrame {
     private final static String CONFIG_FILE_NAME = ".JRPN.config";
     private final static String STATE_FILE_NAME = ".JRPN.CalcState.xml";
 
+    public final static Font DEJA_VU_SANS_BOLD = loadFont("DejaVuSans-Bold.ttf");
+
     static java.util.Properties prop;
     final static int CALC_WIDTH = 512;
     final static int CALC_HEIGHT = 320;
@@ -686,7 +688,7 @@ public class fmMain extends javax.swing.JFrame {
 
         bnXY.setIcon(buttonIcons.buttonIcon);
         bnXY.setPressedIcon(buttonIcons.buttonPressedIcon);
-        bnXY.setWhiteLabel("x\u2276y");   // x≶y
+        bnXY.setWhiteLabel("x\u2B0Cy");   // x⬌y
         bnXY.setBlueLabel("PSE");
         bnXY.setKeyCode(52);
         bnXY.setName("");
@@ -807,7 +809,7 @@ public class fmMain extends javax.swing.JFrame {
         bnSTO.setIcon(buttonIcons.buttonIcon);
         bnSTO.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnSTO.setWhiteLabel("STO");
-        bnSTO.setBlueLabel("\u2B9C"); // ⮜
+        bnSTO.setBlueLabel("<");
         bnSTO.setKeyCode(68);
         bnSTO.setName("");
         bnSTO.setOriginalX(169);
@@ -819,7 +821,7 @@ public class fmMain extends javax.swing.JFrame {
         bnRCL.setIcon(buttonIcons.buttonIcon);
         bnRCL.setPressedIcon(buttonIcons.buttonPressedIcon);
         bnRCL.setWhiteLabel("RCL");
-        bnRCL.setBlueLabel("\u2B9E"); // ⮞
+        bnRCL.setBlueLabel(">");
         bnRCL.setKeyCode(69);
         bnRCL.setName("");
         bnRCL.setOriginalX(215);
@@ -886,8 +888,8 @@ public class fmMain extends javax.swing.JFrame {
                 new CalcFace.YellowText(bn8, "MASKR"),
                 new CalcFace.YellowText(bn9, "RMD"),
                 new CalcFace.YellowText(bnDiv, "XOR"),
-                new CalcFace.YellowText(bnGSB, "x\u2276(i)"),   // x≶(i)
-                new CalcFace.YellowText(bnGTO, "x\u2276I"),   // x≶I
+                new CalcFace.YellowText(bnGSB, "x\u2B0C(i)"),   // x⬌(i)
+                new CalcFace.YellowText(bnGTO, "x\u2B0CI"),   // x⬌I
                 new CalcFace.YellowMultiText(scaleInfo, bnHEX, bnBIN, 0, "SHOW"),
                 new CalcFace.YellowText(bn4, "SB"),
                 new CalcFace.YellowText(bn5, "CB"),
@@ -1467,9 +1469,9 @@ public class fmMain extends javax.swing.JFrame {
     }//GEN-LAST:event_fmMain_Resized
 
     private void setFonts() {
-        scaleInfo.whiteFont = new Font("Lucidia Sans", Font.BOLD, scaleInfo.scale(28)/2);
+        scaleInfo.whiteFont = DEJA_VU_SANS_BOLD.deriveFont(scaleInfo.scale(140)/10f);
         scaleInfo.whiteFontMetrics = bn0.getFontMetrics(scaleInfo.whiteFont);
-        scaleInfo.blueFont = new Font("Lucidia Sans", Font.BOLD, scaleInfo.scale(9));
+        scaleInfo.blueFont = DEJA_VU_SANS_BOLD.deriveFont(scaleInfo.scale(90)/10f);
         scaleInfo.blueFontMetrics = bn0.getFontMetrics(scaleInfo.blueFont);
         for (Component comp : jLayeredPane1.getComponents()) {
             if (comp instanceof GButton) {
@@ -1479,9 +1481,9 @@ public class fmMain extends javax.swing.JFrame {
         }
         scaleInfo.yellowFont = scaleInfo.blueFont;
         scaleInfo.yellowFontMetrics = scaleInfo.blueFontMetrics;
-        scaleInfo.faceFont = new Font("Lucidia Sans", Font.BOLD, scaleInfo.scale(12));
+        scaleInfo.faceFont = DEJA_VU_SANS_BOLD.deriveFont(scaleInfo.scale(120)/10f);
         scaleInfo.faceFontMetrics = pnCalcFace.getFontMetrics(scaleInfo.faceFont);
-        jupiterFont = new Font("Lucidia Sans", Font.BOLD, scaleInfo.scale(11));
+        jupiterFont = DEJA_VU_SANS_BOLD.deriveFont(scaleInfo.scale(110)/10f);
         jupiterFontMetrics = jupiterLabel.getFontMetrics(jupiterFont);
         jupiterTextWidth = jupiterFontMetrics.stringWidth(JUPITER_TEXT);
     }
@@ -2414,6 +2416,19 @@ public class fmMain extends javax.swing.JFrame {
                 } catch (IOException e) {
                     Logger.getLogger(fmMain.class.getName()).log(Level.WARNING, null, e);
                 }
+            }
+        }
+    }
+
+    private static Font loadFont(String name) {
+        try {
+            return Font.createFont(Font.TRUETYPE_FONT,
+                    fmMain.class.getResourceAsStream("/com/jovial/jrpn/resources/" + name));
+        } catch (Exception ex) {
+            if (ex instanceof RuntimeException) {
+                throw (RuntimeException) ex;
+            } else {
+                throw new RuntimeException(ex);
             }
         }
     }
