@@ -14,13 +14,13 @@ body {
 }
 
 #Wrapper {
-    background-image: url('Images/Background.gif');
+    background-image: url('Background.gif');
     background-repeat: repeat-y;
 }
 
 #Header {
     height: 140px;
-    background-image: url('Images/Banner.gif');
+    background-image: url('Banner.gif');
 }
 
 #Navigation {
@@ -69,7 +69,7 @@ body {
     display: block;
     width: 150px;
     height: 30px;
-    background: url('Images/Button.gif') no-repeat 0 0;
+    background: url('Button.gif') no-repeat 0 0;
     /* normal text please */
     text-decoration: none;
     color: inherit;
@@ -81,12 +81,12 @@ body {
 
     #Navigation a:hover {
         /* change to the hover image */
-        background: url('Images/ButtonH.gif') no-repeat 0 0;
+        background: url('ButtonH.gif') no-repeat 0 0;
         font-weight: bold;
     }
 
     #Navigation a:active {
         /* change to the active image */
-        background: url('Images/ButtonA.gif') no-repeat 0 0;
+        background: url('ButtonA.gif') no-repeat 0 0;
         font-weight: bold;
     }
