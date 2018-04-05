@@ -8,6 +8,5 @@
     <entry key="NumRegisters">32</entry>
     <entry key="HomeURL">http://jrpn.jovial.com</entry>
     <entry key="Version">6.0.8</entry>
-    <entry key="HelpURL">http://www.wrpn.emmet-gray.com/UsersGuide.html</entry>
-    <!-- TODO ^^ -->
+    <entry key="HelpURL">http://jrpn.jovial.com/UsersGuide.html</entry>
 </properties>

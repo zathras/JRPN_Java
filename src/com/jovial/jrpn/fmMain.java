@@ -180,9 +180,8 @@ public class fmMain extends javax.swing.JFrame {
         prop.setProperty("SleepDelay", "1500");
         prop.setProperty("SyncConversions", "true");
         prop.setProperty("HomeURL", "http://jrpn.jovial.com");
-        prop.setProperty("Email", "egray1@hot.rr.com");
-        prop.setProperty("Version", "6.0.8");
-        prop.setProperty("HelpURL", "http://www.wrpn.emmet-gray.com/UsersGuide.html"); // TODO
+        prop.setProperty("jrpn-Version", "1.0");
+        prop.setProperty("jrpn-HelpURL", "http://jrpn.jovial.com/UsersGuide.html");
 
         // load the config file.  Error are ignored
         try {
@@ -2063,7 +2062,7 @@ public class fmMain extends javax.swing.JFrame {
         if (desktop.isSupported(java.awt.Desktop.Action.BROWSE)) {
             try {
                 // TODO: Use the BrowserLauncher2 library
-                desktop.browse(new java.net.URI(prop.getProperty("HelpURL")));
+                desktop.browse(new java.net.URI(prop.getProperty("jrpn-HelpURL")));
             } catch (Exception e) {
                 Logger.getLogger(fmMain.class.getName()).log(Level.WARNING, null, e);
             }
