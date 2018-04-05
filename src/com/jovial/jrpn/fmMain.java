@@ -179,7 +179,7 @@ public class fmMain extends javax.swing.JFrame {
         prop.setProperty("PrgmMemoryLines", "302");
         prop.setProperty("SleepDelay", "1500");
         prop.setProperty("SyncConversions", "true");
-        prop.setProperty("HomeURL", "http://jrpn.jovial.com");
+        prop.setProperty("jrpn-HomeURL", "http://jrpn.jovial.com");
         prop.setProperty("jrpn-Version", "1.0");
         prop.setProperty("jrpn-HelpURL", "http://jrpn.jovial.com/UsersGuide.html");
 

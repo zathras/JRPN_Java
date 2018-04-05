@@ -6,18 +6,16 @@ import java.util.logging.Logger;
 // The "vanity plate"
 public class fmAbout extends javax.swing.JFrame {
     
-    // I like to manually control the release date value
-    private final String RELEASE_DATE = "11 Jan 2016";
+    private final String RELEASE_DATE = "April 2018";
    
 
     public fmAbout() {
         initComponents();
         
         // v6.0.1 - 29 Mar 12
-        lbVersion.setText(lbVersion.getText() + fmMain.prop.getProperty("Version"));
+        lbVersion.setText(lbVersion.getText() + fmMain.prop.getProperty("jrpn-Version"));
         lbDate.setText(lbDate.getText() + RELEASE_DATE);
-        lbWeb.setText("<html><u>" + fmMain.prop.getProperty("HomeURL") + "</u></html>");
-        lbEmail.setText("<html><u>" + fmMain.prop.getProperty("Email") + "</u></html>");
+        lbWeb.setText("<html><u>" + fmMain.prop.getProperty("jrpn-HomeURL") + "</u></html>");
     }
 
     /**
@@ -47,7 +45,6 @@ public class fmAbout extends javax.swing.JFrame {
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/jovial/jrpn/resources/JRPN_small.png"))); // NOI18N
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/jovial/jrpn/resources/Egray_small.png"))); // NOI18N
 
         jButton1.setText("OK");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -57,15 +54,15 @@ public class fmAbout extends javax.swing.JFrame {
         });
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
-        jLabel3.setText("JRPN");
+        jLabel3.setText("Jovial RPN");
 
-        jLabel4.setText("Windows Reverse Polish Notation Calculator 16C");
+        jLabel4.setText("Jovial Reverse Polish Notation Calculator 16C");
 
         lbVersion.setText("Version: ");
 
         lbDate.setText("Date: ");
 
-        jLabel7.setText("Author: Emmet Gray");
+        jLabel7.setText("Author: Bill Foote, adapted from Emmet Gray's");
 
         jLabel8.setText("Home: ");
 
@@ -78,16 +75,10 @@ public class fmAbout extends javax.swing.JFrame {
             }
         });
 
-        jLabel10.setText("Email: ");
+        jLabel10.setText("");
 
         lbEmail.setForeground(java.awt.Color.blue);
-        lbEmail.setText("email");
-        lbEmail.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lbEmail.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbEmailMouseClicked(evt);
-            }
-        });
+        lbEmail.setText("");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -167,7 +158,7 @@ public class fmAbout extends javax.swing.JFrame {
         if(desktop.isSupported(java.awt.Desktop.Action.BROWSE)) {
             try {
                 // TODO: Use the BrowserLauncher2 library
-                desktop.browse(new java.net.URI(fmMain.prop.getProperty("HomeURL")));
+                desktop.browse(new java.net.URI(fmMain.prop.getProperty("jrpn-HomeURL")));
             }
             catch (Exception e) {
                 Logger.getLogger(fmMain.class.getName()).log(Level.WARNING, null, e);
@@ -175,17 +166,6 @@ public class fmAbout extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_lbWebMouseClicked
 
-    private void lbEmailMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbEmailMouseClicked
-        java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
-        if(desktop.isSupported(java.awt.Desktop.Action.BROWSE)) {
-            try {
-                desktop.browse(new java.net.URI("mailto:" + fmMain.prop.getProperty("Email")));
-            }
-            catch (Exception e) {
-                Logger.getLogger(fmMain.class.getName()).log(Level.WARNING, null, e);
-            }
-        }
-    }//GEN-LAST:event_lbEmailMouseClicked
 
     /**
      * @param args the command line arguments
