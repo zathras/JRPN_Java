@@ -640,7 +640,7 @@ public class fmMain extends javax.swing.JFrame {
 
         bnMul.setIcon(buttonIcons.buttonIcon);
         bnMul.setPressedIcon(buttonIcons.buttonPressedIcon);
-        bnMul.setWhiteLabel("X");
+        bnMul.setWhiteLabel("\u00D7");
         bnMul.setBlueLabel("DBL\u00D7");  // DBL×
         bnMul.setKeyCode(32);
         bnMul.setName("");
@@ -760,7 +760,7 @@ public class fmMain extends javax.swing.JFrame {
 
         bnMin.setIcon(buttonIcons.buttonIcon);
         bnMin.setPressedIcon(buttonIcons.buttonPressedIcon);
-        bnMin.setWhiteLabel("-");
+        bnMin.setWhiteLabel("\u2212");   // −
         bnMin.setBlueLabel("x>0");
         bnMin.setKeyCode(48);
         bnMin.setName("");
