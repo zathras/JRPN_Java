@@ -1,8 +1,8 @@
 # JRPN, Desktop Java version
 
-![Screenshot](README.dir/screenshot_small.png)
+![Screenshot](docs/jrpn_screenshot.png)
 
-JRPN is and adaptation of [Emmet Gray's](http://www.emmet-gray.com/) 
+JRPN is an adaptation of [Emmet Gray's](http://www.emmet-gray.com/) 
 wonderful little WRPN
 calculator, modeled after the [HP 16-C](https://en.wikipedia.org/wiki/HP-16C).
 The original is available at 
@@ -10,7 +10,7 @@ The original is available at
 As of this writing, I've basically finished the Java/Desktop
 version.  I'm quite happy with how it looks.
 It uses fonts to draw the key labels, so they come out nice and 
-crisp on big screens.  I call it done, and I have only tested it
+crisp on big screens.  I call it done, but I have only tested it
 on Linux and Windows so far.
 
 In order to track the changes, I started with the original source, downloaded
@@ -35,4 +35,4 @@ over in
 [https://github.com/zathras/WRPN_Android](https://github.com/zathras/WRPN_Android).
 
 Here's a huge screen grab, to show the UI scaled up:
-![Huge Screenshot](README.dir/screenshot_huge.png)
+![Huge Screenshot](docs/jrpn_screenshot_huge.png)
