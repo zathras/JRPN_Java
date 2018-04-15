@@ -174,11 +174,17 @@ public class GButton extends JButton {
     // joins the sqrt symbol.
     public static class Sqrt extends GButton {
         int sqrtWidth;
+        int overlineWidth;
+        int xWidth;
         int blueHeight;
+        private final static String overline = "\u203E\u203E";
         @Override
         public void alignText() {
             super.alignText();
-            sqrtWidth = scaleInfo.blueFontMetrics.stringWidth("\u221A");  // √
+            FontMetrics fm = scaleInfo.blueFontMetrics;
+            sqrtWidth = fm.stringWidth("\u221A");  // √
+            overlineWidth = fm.stringWidth(overline);
+            xWidth = fm.stringWidth("x");
             blueHeight = scaleInfo.blueFontMetrics.getAscent();
         }
 
@@ -202,9 +208,11 @@ public class GButton extends JButton {
                 shiftLeft = 1;
             }
             // TODO:  Make the shiftLeft factor and minimum be items that can be configured.
-            y -= shiftUp;
             x += sqrtWidth - shiftLeft;
-            g.drawString("x\u0305", x, y);
+            y -= shiftUp;
+            g.drawString("x", x + (overlineWidth - xWidth)/2, y);
+            g.drawString("\u203E\u203E", x, y);
+            // I saw an issue on OSX with combining overline (\u0305)
         }
     }
 }
