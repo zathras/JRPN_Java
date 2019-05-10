@@ -29,8 +29,12 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 // The main form for the calculator
 public class fmMain extends javax.swing.JFrame {
 
-    private final static String CONFIG_FILE_NAME = ".JRPN.config";
-    private final static String STATE_FILE_NAME = ".JRPN.CalcState.xml";
+    private final static File JRPN_DIR = 
+            new File(System.getProperty("user.home"), ".jrpn");
+    private final static File CONFIG_FILE =
+            new File(JRPN_DIR, "config.txt");
+    private final static File STATE_FILE =
+            new File(JRPN_DIR, "state.xml");
 
     public final static Font DEJA_VU_SANS_BOLD = loadFont("DejaVuSans-Bold.ttf");
 
@@ -145,13 +149,13 @@ public class fmMain extends javax.swing.JFrame {
         manager.addKeyEventDispatcher(new MyDispatcher());
 
         // copy the "prototype" config file if it doesn't already exist
-        File config = new File(System.getProperty("user.home"), CONFIG_FILE_NAME);
-        if (!config.exists()) {
+        JRPN_DIR.mkdirs();
+        if (!CONFIG_FILE.exists()) {
             BufferedWriter sw = null;
             String line;
 
             try {
-                sw = new BufferedWriter(new FileWriter(config));
+                sw = new BufferedWriter(new FileWriter(CONFIG_FILE));
                 BufferedReader sr = new BufferedReader(new InputStreamReader(
                         fmMain.class.getResourceAsStream("/com/jovial/jrpn/JRPNconfig.xml")));
 
@@ -185,7 +189,7 @@ public class fmMain extends javax.swing.JFrame {
 
         // load the config file.  Error are ignored
         try {
-            prop.loadFromXML(new FileInputStream(config));
+            prop.loadFromXML(new FileInputStream(CONFIG_FILE));
         } catch (FileNotFoundException e) {
             Logger.getLogger(fmMain.class.getName()).log(Level.WARNING, null, e);
         } catch (IOException e) {
@@ -781,6 +785,10 @@ public class fmMain extends javax.swing.JFrame {
         bnON.setPreferredSize(new java.awt.Dimension(37, 33));
         bnON.setBounds(31, 264, 37, 33);
         jLayeredPane1.add(bnON, javax.swing.JLayeredPane.PALETTE_LAYER);
+        bnON.addActionListener(e -> {
+            stopAndSaveState();
+            dispose();
+        });
 
         bnFKey.setIcon(yellowButtonIcons.buttonIcon);
         bnFKey.setPressedIcon(yellowButtonIcons.buttonPressedIcon);
@@ -1576,6 +1584,11 @@ public class fmMain extends javax.swing.JFrame {
 
     // We are closing!
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        stopAndSaveState();
+    }
+
+
+    private void stopAndSaveState() {
         if (cs.isSaveOnExit()) {
             // stop any running application
             if (cs.isPrgmRunning()) {
@@ -2394,9 +2407,7 @@ public class fmMain extends javax.swing.JFrame {
     private void SaveState() {
         File StateFile;
 
-        // save to the user's version
-        StateFile = new File(System.getProperty("user.home"), STATE_FILE_NAME);
-        SaveState(StateFile.getPath());
+        SaveState(STATE_FILE.getPath());
     }
 
     // Save the Calculator state to a named file
@@ -2435,21 +2446,10 @@ public class fmMain extends javax.swing.JFrame {
 
     // Load the user's default state
     private static void LoadState() {
-        File StateFile;
-
-        // get the user's version
-        StateFile = new File(System.getProperty("user.home"), STATE_FILE_NAME);
-
-        // if the user doesn't have a state file, then use the default
-        if (!StateFile.exists()) {
-            StateFile = new File(System.getProperty("user.dir"), STATE_FILE_NAME);
-
-            // if that doesn't exist, then just quit
-            if (!StateFile.exists()) {
-                return;
-            }
+        if (!STATE_FILE.exists()) {
+            return;
         }
-        LoadState(StateFile.getPath());
+        LoadState(STATE_FILE.getPath());
     }
 
     // Load a saved Calculator state file
