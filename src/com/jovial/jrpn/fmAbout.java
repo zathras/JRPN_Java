@@ -6,15 +6,12 @@ import java.util.logging.Logger;
 // The "vanity plate"
 public class fmAbout extends javax.swing.JFrame {
     
-    private final String RELEASE_DATE = "April 2018";
-   
-
     public fmAbout() {
         initComponents();
         
         // v6.0.1 - 29 Mar 12
         lbVersion.setText(lbVersion.getText() + fmMain.prop.getProperty("jrpn-Version"));
-        lbDate.setText(lbDate.getText() + RELEASE_DATE);
+        lbDate.setText(lbDate.getText() + fmMain.prop.getProperty("jrpn-ReleaseDate"));
         lbWeb.setText("<html><u>" + fmMain.prop.getProperty("jrpn-HomeURL") + "</u></html>");
     }
 
@@ -62,7 +59,7 @@ public class fmAbout extends javax.swing.JFrame {
 
         lbDate.setText("Date: ");
 
-        jLabel7.setText("Author: Bill Foote, adapted from Emmet Gray's");
+        jLabel7.setText("Author: Bill Foote, adapted from Emmet Gray");
 
         jLabel8.setText("Home: ");
 

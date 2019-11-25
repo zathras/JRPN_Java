@@ -19,6 +19,7 @@ package com.jovial.jrpn;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 import java.awt.print.PrinterException;
 import java.io.*;
 import java.util.logging.Level;
@@ -34,7 +35,7 @@ public class fmMain extends javax.swing.JFrame {
     private final static File CONFIG_FILE =
             new File(JRPN_DIR, "config.txt");
     private final static File STATE_FILE =
-            new File(JRPN_DIR, "state.xml");
+            new File(JRPN_DIR, "state.jrpn");
 
     public final static Font DEJA_VU_SANS_BOLD = loadFont("DejaVuSans-Bold.ttf");
 
@@ -121,8 +122,10 @@ public class fmMain extends javax.swing.JFrame {
 
     private ScaleInfo scaleInfo = new ScaleInfo();
 
-    public fmMain() throws InterruptedException {
-        super();
+    public fmMain() {
+    }
+
+    public void init() throws InterruptedException {
         initComponents();
 
         // create the event listener for the buttons
@@ -145,7 +148,7 @@ public class fmMain extends javax.swing.JFrame {
         this.setTitle("JRPN 16c");
         
         // configure a single key event manager
-        KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager(); 
+        KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         manager.addKeyEventDispatcher(new MyDispatcher());
 
         // copy the "prototype" config file if it doesn't already exist
@@ -176,7 +179,7 @@ public class fmMain extends javax.swing.JFrame {
                 }
             }
         }
-            
+
         // set some defaults if there is no config file
         prop = new java.util.Properties();
         prop.setProperty("NumRegisters", "32");
@@ -184,14 +187,13 @@ public class fmMain extends javax.swing.JFrame {
         prop.setProperty("SleepDelay", "1500");
         prop.setProperty("SyncConversions", "true");
         prop.setProperty("jrpn-HomeURL", "http://jrpn.jovial.com");
-        prop.setProperty("jrpn-Version", "1.0");
+        prop.setProperty("jrpn-Version", "1.1");
+        prop.setProperty("jrpn-ReleaseDate", "November 25, 2019");
         prop.setProperty("jrpn-HelpURL", "http://jrpn.jovial.com/UsersGuide.html");
 
         // load the config file.  Error are ignored
         try {
             prop.loadFromXML(new FileInputStream(CONFIG_FILE));
-        } catch (FileNotFoundException e) {
-            Logger.getLogger(fmMain.class.getName()).log(Level.WARNING, null, e);
         } catch (IOException e) {
             Logger.getLogger(fmMain.class.getName()).log(Level.WARNING, null, e);
         }
@@ -1518,10 +1520,10 @@ public class fmMain extends javax.swing.JFrame {
     // File Open
     private void mFileOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mFileOpenActionPerformed
         JFileChooser fileopen = new JFileChooser();
-        FileNameExtensionFilter xml_filter = new FileNameExtensionFilter("XML files", "xml");
-        fileopen.addChoosableFileFilter(xml_filter);
+        FileNameExtensionFilter jrpn_filter = new FileNameExtensionFilter("JRPN files", "jrpn");
+        fileopen.addChoosableFileFilter(jrpn_filter);
 
-        if (fileopen.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+        if (fileopen.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             LoadState(fileopen.getSelectedFile().getPath());
             UpdateMenu();
             ProcessPacket(c.ProcessKey(-1));
@@ -1536,13 +1538,13 @@ public class fmMain extends javax.swing.JFrame {
     // File Save State As
     private void mFileSaveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mFileSaveAsActionPerformed
         JFileChooser filesave = new JFileChooser();
-        FileNameExtensionFilter xml_filter = new FileNameExtensionFilter("XML files", "xml");
-        filesave.addChoosableFileFilter(xml_filter);
+        FileNameExtensionFilter jrpn_filter = new FileNameExtensionFilter("JRPN files", "jrpn");
+        filesave.addChoosableFileFilter(jrpn_filter);
 
-        if (filesave.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+        if (filesave.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             String path = filesave.getSelectedFile().getPath();
-            if (!path.toLowerCase().endsWith(".xml")) {
-                path += ".xml";
+            if (!path.toLowerCase().endsWith(".jrpn")) {
+                path += ".jrpn";
             }
             SaveState(path);
         }
@@ -1552,7 +1554,7 @@ public class fmMain extends javax.swing.JFrame {
     private void mFilePrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mFilePrintActionPerformed
         // a quick sanity check...
         if (cs.getPrgmMemory().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "There are no Program lines to print", "Warning", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "There are no Program lines to print", "Warning", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -1634,7 +1636,7 @@ public class fmMain extends javax.swing.JFrame {
         } catch (IOException e) {
             Logger.getLogger(fmMain.class.getName()).log(Level.WARNING, null, e);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error Converting Pasted Data\n" + ex.getMessage(), "Paste Error", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error Converting Pasted Data\n" + ex.getMessage(), "Paste Error", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_mEditPasteActionPerformed
 
@@ -1916,7 +1918,7 @@ public class fmMain extends javax.swing.JFrame {
     // Reset to the "factory defaults"
     private void mOptionClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mOptionClearActionPerformed
         // Load from the resource
-        LoadState(fmMain.class.getResourceAsStream("/com/jovial/jrpn/CalcState.xml"));
+        LoadState(fmMain.class.getResourceAsStream("/com/jovial/jrpn/CalcState.jrpn"));
         // Not STATE_FILE_NAME; that's the external name, and this is the internal
         // file with the defaults.
         UpdateMenu();
@@ -2101,7 +2103,19 @@ public class fmMain extends javax.swing.JFrame {
     private class MyDispatcher implements KeyEventDispatcher {
 
         @Override
-        public boolean dispatchKeyEvent(java.awt.event.KeyEvent evt) {
+        public boolean dispatchKeyEvent(KeyEvent evt) {
+            Object src = evt.getSource();
+            for (;;) {
+                if (src instanceof fmMain) {
+                    break;      // It's for us
+                } else if (src instanceof Window) {
+                    return false;   // It's not for us
+                } else if (src instanceof Component) {
+                    src = ((Component) src).getParent();    // We might be inside fmMain
+                } else {
+                    return false;   // It's not for us
+                }
+            }
             if (evt.getID() == java.awt.event.KeyEvent.KEY_RELEASED) {
                 switch (evt.getKeyCode()) {
                     case java.awt.event.KeyEvent.VK_0:
@@ -2350,7 +2364,7 @@ public class fmMain extends javax.swing.JFrame {
                 // I'm anticipating that folks might edit the XML by hand
                 // to make minor tweaks to a program.  So, we have to be
                 // ready for a corrupted file
-                JOptionPane.showMessageDialog(null, "Corrupted Program Memory at line " + cs.getPrgmPosition() + "\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Corrupted Program Memory at line " + cs.getPrgmPosition() + "\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 return true;
             }
             p = c.ProcessKey(k1);
@@ -2359,7 +2373,7 @@ public class fmMain extends javax.swing.JFrame {
                 k1 = Integer.parseInt(line.substring(3, 5).trim(), 16);
                 k2 = Integer.parseInt(line.substring(6, 8).trim(), 16);
             } catch (final Exception e) {
-                JOptionPane.showMessageDialog(null, "Corrupted Program Memory at line " + cs.getPrgmPosition() + "\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Corrupted Program Memory at line " + cs.getPrgmPosition() + "\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 return true;
             }
             c.ProcessKey(k1);
@@ -2370,7 +2384,7 @@ public class fmMain extends javax.swing.JFrame {
                 k2 = Integer.parseInt(line.substring(3, 5).trim(), 16);
                 k3 = Integer.parseInt(line.substring(6, 8).trim(), 16);
             } catch (final Exception e) {
-                JOptionPane.showMessageDialog(null, "Corrupted Program Memory at line " + cs.getPrgmPosition() + "\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Corrupted Program Memory at line " + cs.getPrgmPosition() + "\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 return true;
             }
             c.ProcessKey(k1);
@@ -2405,8 +2419,6 @@ public class fmMain extends javax.swing.JFrame {
 
     // Save the Calculator state to the default user's profile
     private void SaveState() {
-        File StateFile;
-
         SaveState(STATE_FILE.getPath());
     }
 
@@ -2418,7 +2430,7 @@ public class fmMain extends javax.swing.JFrame {
             sw = new BufferedWriter(new FileWriter(FileName));
             sw.write(cs.Serialize());
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Could not save the state file\n" + ex.getMessage(), "Error Saving State", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Could not save the state file\n" + ex.getMessage(), "Error Saving State", JOptionPane.ERROR_MESSAGE);
         } finally {
             if (sw != null) {
                 try {
@@ -2445,15 +2457,23 @@ public class fmMain extends javax.swing.JFrame {
     }
 
     // Load the user's default state
-    private static void LoadState() {
-        if (!STATE_FILE.exists()) {
-            return;
+    private void LoadState() {
+        if (STATE_FILE.exists()) {
+            LoadState(STATE_FILE.getPath());
+        } else {
+            File legacyStateFile = new File(JRPN_DIR, "state.xml");
+            if (legacyStateFile.exists()) {
+                LoadState(legacyStateFile.getPath());
+                SaveState();
+                legacyStateFile.delete();
+
+            }
+            // Otherwise, silently do nothing.
         }
-        LoadState(STATE_FILE.getPath());
     }
 
     // Load a saved Calculator state file
-    private static void LoadState(String FileName) {
+    private void LoadState(String FileName) {
         BufferedReader sr = null;
 
         try {
@@ -2466,7 +2486,7 @@ public class fmMain extends javax.swing.JFrame {
             }
             cs.Deserialize(sb.toString());
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Could not open the state file " + FileName + "\n" + ex.getMessage(), "Error Opening State", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Could not open the state file " + FileName + "\n" + ex.getMessage(), "Error Opening State", JOptionPane.ERROR_MESSAGE);
         } finally {
             if (sr != null) {
                 try {
@@ -2479,7 +2499,7 @@ public class fmMain extends javax.swing.JFrame {
     }
 
     // Load a saved state from a resource stream
-    private static void LoadState(InputStream stream) {
+    private void LoadState(InputStream stream) {
         BufferedReader sr = null;
 
         try {
@@ -2493,7 +2513,7 @@ public class fmMain extends javax.swing.JFrame {
             }
             cs.Deserialize(sb.toString());
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Could not read the state file\n" + ex.getMessage(), "Error Reading State", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Could not read the state file\n" + ex.getMessage(), "Error Reading State", JOptionPane.ERROR_MESSAGE);
         } finally {
             if (sr != null) {
                 try {
@@ -2678,6 +2698,7 @@ public class fmMain extends javax.swing.JFrame {
                 try {
                     final fmMain main_form = new fmMain();
                     main_form.setLocationByPlatform(true);
+                    main_form.init();
                     main_form.setVisible(true);
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
