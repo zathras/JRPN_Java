@@ -60,6 +60,7 @@ public class fmMain extends javax.swing.JFrame {
     private FontMetrics jupiterFontMetrics;
     private int jupiterTextWidth;
     private final static String JUPITER_TEXT = "JRPN";
+    public final static Font LOGO_FONT = loadFont("Ubuntu-Bold-JRPN-Only.ttf");
 
     private final static Rectangle JUPITER_ICON_BOUNDS
             = new Rectangle(452, 21, 36, 48);
@@ -86,7 +87,7 @@ public class fmMain extends javax.swing.JFrame {
             g.setStroke(new BasicStroke(scaleInfo.scale(1)));
             g.drawLine(0, scaleInfo.scaleY(32), width, scaleInfo.scaleY(32));
             g.setFont(jupiterFont);
-            g.drawString(JUPITER_TEXT, scaleInfo.scaleX(1) + (width - jupiterTextWidth) / 2,
+            g.drawString(JUPITER_TEXT, scaleInfo.scaleX(0) + (width - jupiterTextWidth) / 2,
                          scaleInfo.scaleY(32) + jupiterFontMetrics.getAscent());
         }
     }
@@ -187,8 +188,8 @@ public class fmMain extends javax.swing.JFrame {
         prop.setProperty("SleepDelay", "1500");
         prop.setProperty("SyncConversions", "true");
         prop.setProperty("jrpn-HomeURL", "http://jrpn.jovial.com");
-        prop.setProperty("jrpn-Version", "1.1");
-        prop.setProperty("jrpn-ReleaseDate", "November 25, 2019");
+        prop.setProperty("jrpn-Version", "1.1.1");
+        prop.setProperty("jrpn-ReleaseDate", "November 29, 2019");
         prop.setProperty("jrpn-HelpURL", "http://jrpn.jovial.com/UsersGuide.html");
 
         // load the config file.  Error are ignored
@@ -1479,9 +1480,9 @@ public class fmMain extends javax.swing.JFrame {
     }//GEN-LAST:event_fmMain_Resized
 
     private void setFonts() {
-        scaleInfo.whiteFont = DEJA_VU_SANS_BOLD.deriveFont(scaleInfo.scale(140)/10f);
+        scaleInfo.whiteFont = DEJA_VU_SANS_BOLD.deriveFont(scaleInfo.scaleFloat(14f));
         scaleInfo.whiteFontMetrics = bn0.getFontMetrics(scaleInfo.whiteFont);
-        scaleInfo.blueFont = DEJA_VU_SANS_BOLD.deriveFont(scaleInfo.scale(90)/10f);
+        scaleInfo.blueFont = DEJA_VU_SANS_BOLD.deriveFont(scaleInfo.scaleFloat(9));
         scaleInfo.blueFontMetrics = bn0.getFontMetrics(scaleInfo.blueFont);
         for (Component comp : jLayeredPane1.getComponents()) {
             if (comp instanceof GButton) {
@@ -1491,9 +1492,9 @@ public class fmMain extends javax.swing.JFrame {
         }
         scaleInfo.yellowFont = scaleInfo.blueFont;
         scaleInfo.yellowFontMetrics = scaleInfo.blueFontMetrics;
-        scaleInfo.faceFont = DEJA_VU_SANS_BOLD.deriveFont(scaleInfo.scale(120)/10f);
+        scaleInfo.faceFont = LOGO_FONT.deriveFont(scaleInfo.scaleFloat(13.2f));
         scaleInfo.faceFontMetrics = pnCalcFace.getFontMetrics(scaleInfo.faceFont);
-        jupiterFont = DEJA_VU_SANS_BOLD.deriveFont(scaleInfo.scale(110)/10f);
+        jupiterFont = LOGO_FONT.deriveFont(scaleInfo.scaleFloat(11.4f));
         jupiterFontMetrics = jupiterLabel.getFontMetrics(jupiterFont);
         jupiterTextWidth = jupiterFontMetrics.stringWidth(JUPITER_TEXT);
     }

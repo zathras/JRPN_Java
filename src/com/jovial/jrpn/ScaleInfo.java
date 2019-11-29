@@ -45,8 +45,16 @@ public class ScaleInfo {
         return num * drawScaleNumerator / drawScaleDenominator;
     }
 
+    public float scaleFloat(float num) {
+        return (num * drawScaleNumerator) / drawScaleDenominator;
+    }
+
     public int scaleX(int num) {
         return num * drawScaleNumeratorX / drawScaleDenominatorX;
+    }
+
+    public int scaleXDouble(double num) {
+        return (int) Math.round(num * drawScaleNumeratorX / drawScaleDenominatorX);
     }
 
     public int scaleY(int num) {
